@@ -27,8 +27,7 @@ public class MainView extends View implements Runnable
 {
     Handler handler;
     public static int screenX,screenY;
-    private int linesOfEnemies,XT,YT,XTA,YTA,XTA2,YTA2;
-    private float actualShootPosX;
+    private int linesOfEnemies;
     private Background background;
     private Enemies[] enemies;
     private Player player;
@@ -36,6 +35,7 @@ public class MainView extends View implements Runnable
     private Paint p;
     private int posBSX,posBSY;
     private Bitmap shootButton,resizedShootButton;
+
     public MainView(Context ctx)
     {
         super(ctx);

@@ -22,6 +22,7 @@ public class Enemies
     private int numberOfEnemies;
     private boolean[] isDestroyed;
     public static boolean destroyShoot;
+
     public Enemies(Context c, float indexPosY)
     {
         numberOfEnemies = 10;

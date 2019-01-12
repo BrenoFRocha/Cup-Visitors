@@ -17,8 +17,9 @@ public class Shoot
 {
     private Bitmap shootImage,resizedShootImage;
     public static boolean thereIsAShoot;
-    public float posX, posY, newPosX;
+    public float posX, posY;
     public int sizeX,sizeY;
+
     public Shoot(Context ctx,float SizeYPLayer)
     {
         thereIsAShoot = false;
