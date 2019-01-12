@@ -18,11 +18,11 @@ public class Background
     private Bitmap backgroundImage, resizedBackground;
     private float posY1, posY2;
 
-    public Background(int ScreenX, int ScreenY, Context c) {
+    public Background(Context c) {
         posY1 = 0;
-        posY2 = -ScreenY;
+        posY2 = -MainView.screenY;
         backgroundImage = BitmapFactory.decodeResource(c.getResources(), R.drawable.space);
-        resizedBackground = MainView.getResizedBitmap(backgroundImage, ScreenX, ScreenY);
+        resizedBackground = Bitmap.createScaledBitmap(backgroundImage, MainView.screenX, MainView.screenY, false);
     }
 
     public void Draw(Canvas canvas, Paint p) {
@@ -38,6 +38,5 @@ public class Background
         }
         posY1 += MainView.screenY / 100;
         posY2 += MainView.screenY / 100;
-
     }
 }

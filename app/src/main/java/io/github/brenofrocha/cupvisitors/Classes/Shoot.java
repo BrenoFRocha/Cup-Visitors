@@ -18,7 +18,7 @@ public class Shoot
     private Bitmap shootImage,resizedShootImage;
     public static boolean thereIsAShoot;
     public float posX, posY;
-    public int sizeX,sizeY;
+    public int sizeX,sizeY, screenY;
 
     public Shoot(Context ctx,float SizeYPLayer)
     {
@@ -26,15 +26,16 @@ public class Shoot
         shootImage = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.shoot);
         sizeX = (int)(MainView.screenX/(6.5f*5.5f));
         sizeY = (int)(MainView.screenY/20);
-        resizedShootImage = MainView.getResizedBitmap(shootImage, sizeX, sizeY);
+        this.screenY = MainView.screenY;
+        resizedShootImage = Bitmap.createScaledBitmap(shootImage, sizeX, sizeY, false);
         posY = MainView.screenY - SizeYPLayer * 1.2f;
     }
     public void Update(float PosX,float SizeYPLayer)
     {
-        if(Enemies.destroyShoot)
+        if(Enemy.destroyShoot)
         {
             thereIsAShoot = false;
-            Enemies.destroyShoot = false;
+            Enemy.destroyShoot = false;
             posY = MainView.screenY - SizeYPLayer * 1.2f;
         }
         if(posY < -sizeY && thereIsAShoot)

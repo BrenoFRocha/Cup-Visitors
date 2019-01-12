@@ -1,20 +1,21 @@
 package io.github.brenofrocha.cupvisitors.Views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
-import android.view.Display;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+
+import java.util.Random;
 
 import io.github.brenofrocha.cupvisitors.Classes.Background;
-import io.github.brenofrocha.cupvisitors.Classes.Enemies;
+import io.github.brenofrocha.cupvisitors.Classes.Enemy;
 import io.github.brenofrocha.cupvisitors.Classes.Player;
 import io.github.brenofrocha.cupvisitors.Classes.Shoot;
 import io.github.brenofrocha.cupvisitors.R;
@@ -26,64 +27,80 @@ import io.github.brenofrocha.cupvisitors.R;
 public class MainView extends View implements Runnable
 {
     Handler handler;
-    public static int screenX,screenY;
-    private int linesOfEnemies;
+    private int columnsOfEnemies, linesOfEnemies, posBSX,posBSY;
+    public static int screenX,screenY, enemiesVelocityX;
+    private float[] enemyPosY;
+    public static float enemySizeX;
     private Background background;
-    private Enemies[] enemies;
+    private Enemy[][] enemies;
     private Player player;
     private Shoot shoot;
     private Paint p;
-    private int posBSX,posBSY;
-    private Bitmap shootButton,resizedShootButton;
+    private Bitmap shootButton,resizedShootButton, resizedEnemyImage;
 
     public MainView(Context ctx)
     {
         super(ctx);
         handler = new android.os.Handler();
         handler.post(this);
-        WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        screenX = display.getWidth();
-        screenY = display.getHeight();
+        DisplayMetrics display = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager()
+                                 .getDefaultDisplay()
+                                 .getMetrics(display);
+        screenX = display.widthPixels;
+        screenY = display.heightPixels;
         p = new Paint();
-        linesOfEnemies = 6;
-        enemies = new Enemies[linesOfEnemies];
+
+        //Enemy
+        enemiesVelocityX = 1;
+        linesOfEnemies = 7;
+        columnsOfEnemies = 9;
+        Bitmap[] enemyImages = new Bitmap[10];
+        enemyPosY = new float[linesOfEnemies];
+        enemyImages[0] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.germany);
+        enemyImages[1] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.italy);
+        enemyImages[2] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.brazil);
+        enemyImages[3] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.argentina);
+        enemyImages[4] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.portugal);
+        enemyImages[5] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.spain);
+        enemyImages[6] = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.england);
+        enemyImages[7] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.france);
+        enemyImages[8] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.usa);
+        enemyImages[9] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.netherlands);
+        enemySizeX = screenX/enemyImages[0].getWidth()*2.5f;
+        float enemySizeY = screenY/enemyImages[0].getHeight()*2.2f;
+        enemies = new Enemy[linesOfEnemies][columnsOfEnemies];
         for(int i = 0; i < linesOfEnemies; i++)
         {
-            enemies[i] = new Enemies(ctx, i);
+            for(int j = 0; j < columnsOfEnemies; j++)
+            {
+                Random r = new Random();
+                int id = r.nextInt(10);
+                resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
+                enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                enemies[i][j] = new Enemy(((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id);
+            }
         }
         player = new Player(ctx);
         shoot = new Shoot(ctx,player.sizeY);
-        background = new Background(screenX,screenY,ctx);
+        background = new Background(ctx);
         shootButton = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shootbutton);
-        resizedShootButton = getResizedBitmap(shootButton, (int)(screenX/6.5f),screenY/4);
+        resizedShootButton = Bitmap.createScaledBitmap(shootButton, (int)(screenX/6.5f),screenY/4, false);
         posBSX = screenX-resizedShootButton.getWidth() - screenX /150;
         posBSY = screenY-resizedShootButton.getHeight();
     }
-    public static Bitmap getResizedBitmap(Bitmap btmp, int newWidth, int newHeight)
-    {
-        int width = btmp.getWidth();
-        int height = btmp.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap resizedBitmap = Bitmap.createBitmap(btmp, 0, 0, width, height, matrix, false);
-        return resizedBitmap;
-    }
-    private int mActivePointerId;
+
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        mActivePointerId = event.getPointerId(0);
+        int mActivePointerId = event.getPointerId(0);
         int pointerIndex = event.findPointerIndex(mActivePointerId);
         float x = event.getX(pointerIndex);
         float y = event.getY(pointerIndex);
         float xt = event.getX(0);
         float yt = event.getY(0);
         int index = MotionEventCompat.getActionIndex(event);
-        int xPos = -1;
-        int yPos = -1;
+        int xPos;
         float xtPos;
         float ytPos;
         if(event.getPointerCount() > 1)
@@ -101,12 +118,6 @@ public class MainView extends View implements Runnable
         {
             case MotionEvent.ACTION_MOVE:
                 x = (int) event.getX(0);
-                y = (int) event.getY(0);
-                if(event.getPointerCount() > 1)
-                {
-                    xPos = (int)MotionEventCompat.getX(event, index);
-                    yPos = (int)MotionEventCompat.getY(event, index);
-                }
                 break;
             case MotionEvent.ACTION_DOWN:
                 if(xt >= posBSX && xt <= posBSX + resizedShootButton.getWidth() && yt >= posBSY && yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot || xtPos >= posBSX && xtPos <= posBSX + resizedShootButton.getWidth() && ytPos >= posBSY && ytPos <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
@@ -119,13 +130,18 @@ public class MainView extends View implements Runnable
         if (event.getPointerCount() > 1)
         {
             xPos = (int)MotionEventCompat.getX(event, index);
-            yPos = (int)MotionEventCompat.getY(event, index);
-            if(x >= MainView.screenX/2 - enemies[0].sizeX*1.5f && x <= MainView.screenX - enemies[0].sizeX*3 || xPos >= MainView.screenX/2 - enemies[0].sizeX*1.5f && xPos <= MainView.screenX - enemies[0].sizeX*3)
+            if(x >= MainView.screenX/2 - enemySizeX*1.5f &&
+                    x <= MainView.screenX - enemySizeX*3 ||
+                    xPos >= MainView.screenX/2 - enemySizeX*1.5f &&
+                    xPos <= MainView.screenX - enemySizeX*3)
             {
                 player.MoveRight = true;
                 player.MoveLeft = false;
             }
-            else if(x > 0 && x < MainView.screenX/2 - enemies[0].sizeX*1.5f || xPos > 0 && xPos < MainView.screenX/2 - enemies[0].sizeX*1.5f)
+            else if(x > 0 &&
+                    x < MainView.screenX/2 - enemySizeX*1.5f ||
+                    xPos > 0 &&
+                    xPos < MainView.screenX/2 - enemySizeX*1.5f)
             {
                 player.MoveRight = false;
                 player.MoveLeft = true;
@@ -137,17 +153,22 @@ public class MainView extends View implements Runnable
         }
         else
         {
-            if (x >= MainView.screenX / 2 - enemies[0].sizeX * 1.5f && x <= MainView.screenX - enemies[0].sizeX * 3)
+            if (x >= MainView.screenX / 2 - enemySizeX * 1.5f &&
+                    x <= MainView.screenX - enemySizeX * 3)
             {
                 player.MoveRight = true;
                 player.MoveLeft = false;
             }
-            else if (x > 0 && x < MainView.screenX / 2 - enemies[0].sizeX * 1.5f)
+            else if (x > 0 &&
+                    x < MainView.screenX / 2 - enemySizeX * 1.5f)
             {
                 player.MoveRight = false;
                 player.MoveLeft = true;
             }
-            if (xt >= posBSX && xt <= posBSX + resizedShootButton.getWidth() && yt >= posBSY && yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
+            if (xt >= posBSX &&
+                    xt <= posBSX + resizedShootButton.getWidth() &&
+                    yt >= posBSY &&
+                    yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
             {
                 shoot.thereIsAShoot = true;
             }
@@ -161,15 +182,18 @@ public class MainView extends View implements Runnable
         }
         return true;
     }
+
     @Override
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
         background.Draw(canvas, p);
-        canvas.drawRect(canvas.getWidth() - enemies[0].sizeX * 3, 0, canvas.getWidth(), canvas.getHeight(), p);
+        canvas.drawRect(screenX - enemySizeX * 3, 0, screenX, screenY, p);
         for(int i = 0; i < linesOfEnemies; i++)
         {
-            enemies[i].Draw(canvas, p);
+            for(int j = 0; j < columnsOfEnemies; j++) {
+                enemies[i][j].Draw(canvas, p, enemyPosY[i]);
+            }
         }
         canvas.drawBitmap(resizedShootButton, posBSX, posBSY, p);
         shoot.Draw(canvas,p);
@@ -180,12 +204,38 @@ public class MainView extends View implements Runnable
     private void Update()
     {
         background.Update();
+
+        //Shoot
+        shoot.Update(player.posX + player.sizeX/4f,player.sizeY);
+
+        //Enemies
+        boolean closer = false;
         for(int i = 0; i < linesOfEnemies; i++)
         {
-            enemies[i].Update(shoot.posX,shoot.posY,shoot.posX+shoot.sizeX,shoot.posY-shoot.sizeY);
+            for(int j = 0; j < columnsOfEnemies; j++) {
+                if (enemies[i][j].posX < screenX/50 ||
+                        enemies[i][j].posX + enemySizeX > (screenX - enemySizeX * 3) - screenX/50) {
+                    enemiesVelocityX *= -1;
+                    closer = true;
+                }
+            }
         }
+        if(closer)
+        {
+            for(int i = 0; i < linesOfEnemies; i++)
+            {
+                enemyPosY[i] += 5;
+            }
+        }
+        for(int i = 0; i < linesOfEnemies; i++)
+        {
+            for(int j = 0; j < columnsOfEnemies; j++) {
+                enemies[i][j].Update(shoot.posX, shoot.posY, shoot.sizeX, shoot.sizeY);
+            }
+        }
+
+        //Player
         player.Update();
-        shoot.Update(player.posX + player.sizeX/4f,player.sizeY);
     }
 
     @Override

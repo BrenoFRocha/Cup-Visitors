@@ -22,10 +22,10 @@ public class Player
     public Player(Context c)
     {
         playerImage = BitmapFactory.decodeResource(c.getResources(), R.drawable.spaceship);
-        playerResizedImage = MainView.getResizedBitmap(playerImage, (int) (MainView.screenX / 15.5f), (int) (MainView.screenY / 8f));
+        playerResizedImage = Bitmap.createScaledBitmap(playerImage, (int) (MainView.screenX / 15.5f), (int) (MainView.screenY / 8f), false);
         sizeX = playerResizedImage.getWidth();
         sizeY = playerResizedImage.getHeight();
-        posX = MainView.screenX/2 - sizeX/2 - (Enemies.sizeX*1.5f);
+        posX = MainView.screenX/2 - sizeX/2 - (MainView.enemySizeX*1.5f);
         velocity = 5f;
     }
 
@@ -36,7 +36,7 @@ public class Player
 
     public void Update()
     {
-        if(MoveRight && posX + sizeX <= MainView.screenX - Enemies.sizeX*3 - MainView.screenX/250)
+        if(MoveRight && posX + sizeX <= MainView.screenX - MainView.enemySizeX*3 - MainView.screenX/250)
         {
             posX += velocity;
         }
@@ -45,5 +45,4 @@ public class Player
             posX -= velocity;
         }
     }
-
 }
