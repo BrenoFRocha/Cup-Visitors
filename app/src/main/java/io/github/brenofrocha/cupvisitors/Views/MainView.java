@@ -74,8 +74,8 @@ public class MainView extends View implements Runnable
         Bitmap sBImage, sPBImage, mBImage, sdBImage, nosdBImage, resizedEnemyImage;
 
         //Buttons
-        bSizeX = (int)((screenX*0.557f)/4.5f);
-        bSizeY = (int)((screenY*1.0694f)/4.5f);
+        bSizeX = (int)((screenX*0.557f)/5f);
+        bSizeY = (int)((screenY*1.0694f)/5f);
         bPosX = (int)((screenX - (enemySizeX * 3)) + (enemySizeX * 3/2) - (bSizeX/2));
         //Menu Button
         mBPosY = (int)(bSizeY*0.20f);
@@ -182,7 +182,6 @@ public class MainView extends View implements Runnable
                 {
                     shootPressed = false;
                 }
-
                 if(touchX >= 0 &&
                 touchX < (screenX/2 - (enemySizeX*3/2)))
                 {
@@ -190,11 +189,17 @@ public class MainView extends View implements Runnable
                     player.MoveLeft = true;
                 }
                 if(touchX >= (screenX/2 - (enemySizeX*3/2)) &&
-                touchX < (screenX - (enemySizeX*3/2)))
+                touchX < (screenX - (enemySizeX*3)))
                 {
                     player.MoveLeft = false;
                     player.MoveRight = true;
                 }
+                if(touchX > (screenX - (enemySizeX*3)))
+                {
+                    player.MoveRight = false;
+                    player.MoveLeft = false;
+                }
+
                 break;
             case MotionEvent.ACTION_UP:
                 shootPressed = false;
