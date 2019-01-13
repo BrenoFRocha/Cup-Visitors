@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -27,10 +26,11 @@ import io.github.brenofrocha.cupvisitors.R;
 public class MenuView extends View implements Runnable
 {
     Handler handler;
-    private int bSizeX, bSizeY, pBPosX, pBPosY, aBPosX, aBPosY, iBPosX, iBPosY;
+    private int bSizeX, bSizeY, pBPosX, pBPosY, aBPosX, aBPosY, iBPosX, iBPosY, sBSizeX, sBSizeY, sBPosX, sBPosY;
     public static int screenX, screenY;
+    private boolean sound;
     private Background background;
-    private Button playButton, aboutButton, instructionsButton;
+    private Button playButton, aboutButton, instructionsButton, soundButton, noSoundButton;
     private Paint p;
     private Bitmap menuArt;
     private Context ctx;
@@ -64,18 +64,29 @@ public class MenuView extends View implements Runnable
         paintFade.setAlpha(alpha);
         fadeIn = true;
 
+        //Sound
+        sound = true;
+        sBSizeX = (int)((screenX*0.557f)/7f);
+        sBSizeY = (int)((screenY*1.0694f)/7f);
+        sBPosX = (int)(sBSizeX*0.20f);
+        sBPosY = (int)(sBSizeY*0.20f);
+        Bitmap sBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), sBSizeX, sBSizeY, false);
+        Bitmap nSBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), sBSizeX, sBSizeY, false);
+        soundButton = new Button(sBPosX, sBPosY, sBImage);
+        noSoundButton = new Button(sBPosX, sBPosY, nSBImage);
+
         //Background
         background = new Background(ctx, screenX, screenY);
 
         //Buttons
         bSizeX = (int)((screenX*0.557f)/3.5f);
         bSizeY = (int)((screenY*1.0694f)/3.5f);
-        pBPosX = (int)(screenX/2 - bSizeX/2);
-        pBPosY = (int)(screenY/2);
-        aBPosX = (int)(bSizeX);
-        aBPosY = (int)(screenY/2 + bSizeY/2);
-        iBPosX = (int)(screenX - bSizeX*2);
-        iBPosY = (int)(screenY/2 + bSizeY/2);
+        pBPosX = (screenX/2 - bSizeX/2);
+        pBPosY = screenY/2;
+        aBPosX = bSizeX;
+        aBPosY = screenY/2 + bSizeY/2;
+        iBPosX = screenX - bSizeX*2;
+        iBPosY = screenY/2 + bSizeY/2;
         Bitmap playBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.play_button), bSizeX, bSizeY, false);
         playButton = new Button(pBPosX, pBPosY, playBImage);
         Bitmap aboutBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.about_button), bSizeX, bSizeY, false);
@@ -120,6 +131,13 @@ public class MenuView extends View implements Runnable
                         fadeOut = true;
                     }
                 }
+                else if(touchX >= sBPosX &&
+                        touchX <= sBPosX + sBSizeX &&
+                        touchY >= sBPosY &&
+                        touchY <= sBPosY + sBSizeY)
+                {
+                    sound = !sound;
+                }
                 break;
         }
         return true;
@@ -144,6 +162,14 @@ public class MenuView extends View implements Runnable
         playButton.draw(canvas, p);
         aboutButton.draw(canvas, p);
         instructionsButton.draw(canvas, p);
+        if(sound)
+        {
+            soundButton.draw(canvas,p);
+        }
+        else
+        {
+            noSoundButton.draw(canvas,p);
+        }
         canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
