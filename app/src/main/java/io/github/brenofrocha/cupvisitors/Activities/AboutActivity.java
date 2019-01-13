@@ -5,13 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import io.github.brenofrocha.cupvisitors.Views.AboutView;
 import io.github.brenofrocha.cupvisitors.Views.MenuView;
 
-/**
- * Created by Breno on 12/01/2019.
- */
-
-public class MenuActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +21,6 @@ public class MenuActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Tela
-        setContentView(new MenuView(this, this));
+        setContentView(new AboutView(this, this));
     }
 }

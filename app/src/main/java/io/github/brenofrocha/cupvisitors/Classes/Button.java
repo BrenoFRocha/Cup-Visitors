@@ -10,23 +10,17 @@ import android.graphics.Paint;
 
 public class Button {
 
-    private int posX, posY, sizeX, sizeY;
+    private int posX, posY;
     private Bitmap image;
 
-    public Button(int posX, int posY, int sizeX, int sizeY, Bitmap buttonImage)
+    public Button(int posX, int posY, Bitmap buttonImage)
     {
         this.posX = posX;
         this.posY = posY;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
         this.image = buttonImage;
     }
 
     public void draw(Canvas canvas, Paint p) {
         canvas.drawBitmap(image, posX, posY, p);
-    }
-
-    public void update() {
-
     }
 }
