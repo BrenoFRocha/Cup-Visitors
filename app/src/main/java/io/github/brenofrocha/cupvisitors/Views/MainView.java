@@ -175,6 +175,15 @@ public class MainView extends View implements Runnable
                     shootPressed = true;
                 }
                 break;
+            case MotionEvent.ACTION_MOVE:
+                if(touchX < bPosX ||
+                    touchX > bPosX + bSizeX ||
+                    touchY < sBPosY ||
+                    touchY > sBPosY + bSizeY)
+                {
+                    shootPressed = false;
+                }
+                break;
             case MotionEvent.ACTION_UP:
                 shootPressed = false;
                 break;
