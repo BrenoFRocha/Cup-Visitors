@@ -9,16 +9,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
-import android.support.v4.view.MotionEventCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Random;
 
-import io.github.brenofrocha.cupvisitors.Activities.AboutActivity;
-import io.github.brenofrocha.cupvisitors.Activities.MainActivity;
+import io.github.brenofrocha.cupvisitors.Activities.MenuActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
+import io.github.brenofrocha.cupvisitors.Classes.Button;
 import io.github.brenofrocha.cupvisitors.Classes.Enemy;
 import io.github.brenofrocha.cupvisitors.Classes.Player;
 import io.github.brenofrocha.cupvisitors.Classes.Shoot;
@@ -31,17 +31,19 @@ import io.github.brenofrocha.cupvisitors.R;
 public class MainView extends View implements Runnable
 {
     Handler handler;
-    private int columnsOfEnemies, linesOfEnemies, posBSX,posBSY;
+    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX;
     public static int screenX,screenY, enemiesVelocityX;
     private float[] enemyPosY;
     public static float enemySizeX;
+    private boolean sound, shootPressed;
     private Background background;
     private Enemy[][] enemies;
     private Player player;
     private Shoot shoot;
+    private Button menuButton, shootButton, shootButtonPressed, soundButton, noSoundButton;
     private Paint p;
-    private Bitmap shootButton,resizedShootButton, resizedEnemyImage;
     private Context ctx;
+    private Bitmap backgroundGMImage;
 
     //Fade
     public int alpha;
@@ -69,6 +71,30 @@ public class MainView extends View implements Runnable
         paintFade.setColor(Color.BLACK);
         paintFade.setAlpha(alpha);
         fadeIn = true;
+
+        Bitmap sBImage, sPBImage, mBImage, sdBImage, nosdBImage, resizedEnemyImage;
+
+        //Buttons
+        bSizeX = (int)((screenX*0.557f)/4.5f);
+        bSizeY = (int)((screenY*1.0694f)/4.5f);
+        bPosX = (int)((screenX - (enemySizeX * 3)) + (enemySizeX * 3/2) - (bSizeX/2));
+        //Menu Button
+        mBPosY = (int)(bSizeY*0.20f);
+        mBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX,bSizeY, false);
+        menuButton = new Button(bPosX, mBPosY, mBImage);
+        //Shoot Button
+        sBPosY = (int)(screenY - (bSizeY*1.20f));
+        sBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button), bSizeX,bSizeY, false);
+        sPBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button_pressed), bSizeX,bSizeY, false);
+        shootButton = new Button(bPosX, sBPosY, sBImage);
+        shootButtonPressed = new Button(bPosX, sBPosY, sPBImage);
+        //Sound Buttons
+        sound = true;
+        sdBPosY = (int)((screenY/2) - bSizeY/2);
+        sdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), bSizeX,bSizeY, false);
+        soundButton = new Button(bPosX, sdBPosY, sdBImage);
+        nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
+        noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
 
         //Enemy
         enemiesVelocityX = 1;
@@ -109,100 +135,48 @@ public class MainView extends View implements Runnable
 
         //Background
         background = new Background(ctx, screenX, screenY);
-        shootButton = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shootbutton);
-        resizedShootButton = Bitmap.createScaledBitmap(shootButton, (int)(screenX/6.5f),screenY/4, false);
-        posBSX = screenX-resizedShootButton.getWidth() - screenX /150;
-        posBSY = screenY-resizedShootButton.getHeight();
+        backgroundGMImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.game_menu_background), (int)(enemySizeX * 3),screenY, false);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        int mActivePointerId = event.getPointerId(0);
-        int pointerIndex = event.findPointerIndex(mActivePointerId);
-        float x = event.getX(pointerIndex);
-        float y = event.getY(pointerIndex);
-        float xt = event.getX(0);
-        float yt = event.getY(0);
-        int index = MotionEventCompat.getActionIndex(event);
-        int xPos;
-        float xtPos;
-        float ytPos;
-        if(event.getPointerCount() > 1)
-        {
-            xtPos = event.getX(1);
-            ytPos = event.getX(1);
-        }
-        else
-        {
-            xtPos = -1;
-            ytPos = -1;
-        }
+        int eventAction = event.getAction();
 
-        switch (event.getAction() & MotionEvent.ACTION_MASK)
+        int touchX = (int)event.getX();
+        int touchY = (int)event.getY();
+
+        switch (eventAction)
         {
-            case MotionEvent.ACTION_MOVE:
-                x = (int) event.getX(0);
-                break;
             case MotionEvent.ACTION_DOWN:
-                if(xt >= posBSX && xt <= posBSX + resizedShootButton.getWidth() && yt >= posBSY && yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot || xtPos >= posBSX && xtPos <= posBSX + resizedShootButton.getWidth() && ytPos >= posBSY && ytPos <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
+                if(touchX >= bPosX &&
+                        touchX <= bPosX + bSizeX &&
+                        touchY >= mBPosY &&
+                        touchY <= mBPosY + bSizeY)
                 {
-                    shoot.thereIsAShoot = true;
+                    if(!fadeOut && !fadeIn) {
+                        alpha = 0;
+                        sceneFade = "menu";
+                        fadeOut = true;
+                    }
+                }
+                else if(touchX >= bPosX &&
+                        touchX <= bPosX + bSizeX &&
+                        touchY >= sdBPosY &&
+                        touchY <= sdBPosY + bSizeY)
+                {
+                    sound = !sound;
+                }
+                else if(touchX >= bPosX &&
+                        touchX <= bPosX + bSizeX &&
+                        touchY >= sBPosY &&
+                        touchY <= sBPosY + bSizeY)
+                {
+                    shootPressed = true;
                 }
                 break;
-        }
-
-        if (event.getPointerCount() > 1)
-        {
-            xPos = (int)MotionEventCompat.getX(event, index);
-            if(x >= MainView.screenX/2 - enemySizeX*1.5f &&
-                    x <= MainView.screenX - enemySizeX*3 ||
-                    xPos >= MainView.screenX/2 - enemySizeX*1.5f &&
-                    xPos <= MainView.screenX - enemySizeX*3)
-            {
-                player.MoveRight = true;
-                player.MoveLeft = false;
-            }
-            else if(x > 0 &&
-                    x < MainView.screenX/2 - enemySizeX*1.5f ||
-                    xPos > 0 &&
-                    xPos < MainView.screenX/2 - enemySizeX*1.5f)
-            {
-                player.MoveRight = false;
-                player.MoveLeft = true;
-            }
-            if(xtPos >= posBSX && xtPos <= posBSX + resizedShootButton.getWidth() && ytPos >= posBSY && ytPos <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot || xt >= posBSX && xt <= posBSX + resizedShootButton.getWidth() && yt >= posBSY && yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
-            {
-                shoot.thereIsAShoot = true;
-            }
-        }
-        else
-        {
-            if (x >= MainView.screenX / 2 - enemySizeX * 1.5f &&
-                    x <= MainView.screenX - enemySizeX * 3)
-            {
-                player.MoveRight = true;
-                player.MoveLeft = false;
-            }
-            else if (x > 0 &&
-                    x < MainView.screenX / 2 - enemySizeX * 1.5f)
-            {
-                player.MoveRight = false;
-                player.MoveLeft = true;
-            }
-            if (xt >= posBSX &&
-                    xt <= posBSX + resizedShootButton.getWidth() &&
-                    yt >= posBSY &&
-                    yt <= posBSY + resizedShootButton.getHeight() && !shoot.thereIsAShoot)
-            {
-                shoot.thereIsAShoot = true;
-            }
-        }
-        switch (event.getAction() & MotionEvent.ACTION_MASK)
-        {
             case MotionEvent.ACTION_UP:
-                player.MoveRight = false;
-                player.MoveLeft = false;
+                shootPressed = false;
                 break;
         }
         return true;
@@ -213,16 +187,33 @@ public class MainView extends View implements Runnable
     {
         super.onDraw(canvas);
         background.draw(canvas, p);
-        canvas.drawRect(screenX - enemySizeX * 3, 0, screenX, screenY, p);
+        p.setColor(Color.BLUE);
+        canvas.drawBitmap(backgroundGMImage, screenX - enemySizeX * 3, 0, p);
         for(int i = 0; i < linesOfEnemies; i++)
         {
             for(int j = 0; j < columnsOfEnemies; j++) {
                 enemies[i][j].Draw(canvas, p, enemyPosY[i]);
             }
         }
-        canvas.drawBitmap(resizedShootButton, posBSX, posBSY, p);
         shoot.Draw(canvas,p);
         player.Draw(canvas,p);
+        menuButton.draw(canvas,p);
+        if(shootPressed)
+        {
+            shootButtonPressed.draw(canvas,p);
+        }
+        else
+        {
+            shootButton.draw(canvas,p);
+        }
+        if(sound)
+        {
+            soundButton.draw(canvas,p);
+        }
+        else
+        {
+            noSoundButton.draw(canvas,p);
+        }
         canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
@@ -306,8 +297,8 @@ public class MainView extends View implements Runnable
             Intent i = new Intent();
             switch (sceneFade)
             {
-                case "game":
-                    i = new Intent(ctx, MainActivity.class);
+                case "menu":
+                    i = new Intent(ctx, MenuActivity.class);
                     break;
             }
             ctx.startActivity(i);

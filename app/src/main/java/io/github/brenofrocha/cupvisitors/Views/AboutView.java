@@ -32,7 +32,6 @@ public class AboutView extends View implements Runnable
     private Paint p;
     private Bitmap aboutArt;
     private Context ctx;
-    private Activity act;
 
     //Fade
     public int alpha;
@@ -44,7 +43,6 @@ public class AboutView extends View implements Runnable
     {
         super(ctx);
         this.ctx = ctx;
-        this.act = act;
 
         //General
         handler = new android.os.Handler();
@@ -68,10 +66,10 @@ public class AboutView extends View implements Runnable
         background = new Background(ctx, screenX, screenY);
 
         //Buttons
-        bSizeX = (int)((screenX*0.557f)/7f);
-        bSizeY = (int)((screenY*1.0694f)/7f);
-        mBPosX = (int)(screenX/2 - bSizeX/1.8f);
-        mBPosY = (int)(screenY/2 + bSizeY*1.8f);
+        bSizeX = (int)((screenX*0.557f)/4.5f);
+        bSizeY = (int)((screenY*1.0694f)/4.5f);
+        mBPosX = (int)(screenX - bSizeX*1.75f);
+        mBPosY = (int)(screenY - bSizeY*1.3f);
         Bitmap menuBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX, bSizeY, false);
         menuButton = new Button(mBPosX, mBPosY, menuBImage);
 
