@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -98,7 +97,7 @@ public class MainView extends View implements Runnable
 
         //Enemy
         enemiesVelocityX = 1;
-        linesOfEnemies = 7;
+        linesOfEnemies = 8;
         columnsOfEnemies = 9;
         Bitmap[] enemyImages = new Bitmap[10];
         enemyPosY = new float[linesOfEnemies];
@@ -238,9 +237,22 @@ public class MainView extends View implements Runnable
         for(int i = 0; i < linesOfEnemies; i++)
         {
             for(int j = 0; j < columnsOfEnemies; j++) {
-                if (enemies[i][j].posX < screenX/50 ||
-                        enemies[i][j].posX + enemySizeX > (screenX - enemySizeX * 3) - screenX/50) {
+                if (enemies[i][j].posX <= 0 ||
+                    enemies[i][j].posX + enemySizeX > (screenX - (enemySizeX * 3)))
+                {
                     enemiesVelocityX *= -1;
+                    for(int k = 0; k < linesOfEnemies; k++) {
+                        for (int l = 0; l < columnsOfEnemies; l++) {
+                            if(enemiesVelocityX < 1)
+                            {
+                                enemies[k][l].posX -= 2;
+                            }
+                            else
+                            {
+                                enemies[k][l].posX += 2;
+                            }
+                        }
+                    }
                     closer = true;
                 }
             }
@@ -249,7 +261,7 @@ public class MainView extends View implements Runnable
         {
             for(int i = 0; i < linesOfEnemies; i++)
             {
-                enemyPosY[i] += 5;
+                enemyPosY[i] += 3;
             }
         }
         for(int i = 0; i < linesOfEnemies; i++)
