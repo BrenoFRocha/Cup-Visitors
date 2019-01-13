@@ -182,9 +182,24 @@ public class MainView extends View implements Runnable
                 {
                     shootPressed = false;
                 }
+
+                if(touchX >= 0 &&
+                touchX < (screenX/2 - (enemySizeX*3/2)))
+                {
+                    player.MoveRight = false;
+                    player.MoveLeft = true;
+                }
+                if(touchX >= (screenX/2 - (enemySizeX*3/2)) &&
+                touchX < (screenX - (enemySizeX*3/2)))
+                {
+                    player.MoveLeft = false;
+                    player.MoveRight = true;
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 shootPressed = false;
+                player.MoveRight = false;
+                player.MoveLeft = false;
                 break;
         }
         return true;

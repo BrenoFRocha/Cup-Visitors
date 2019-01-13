@@ -26,7 +26,7 @@ public class Player
         sizeX = playerResizedImage.getWidth();
         sizeY = playerResizedImage.getHeight();
         posX = MainView.screenX/2 - sizeX/2 - (MainView.enemySizeX*1.5f);
-        velocity = 5f;
+        velocity = 3f;
     }
 
     public void Draw(Canvas canvas, Paint p)
