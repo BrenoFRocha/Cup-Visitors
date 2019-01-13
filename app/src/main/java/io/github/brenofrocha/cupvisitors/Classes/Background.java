@@ -8,6 +8,7 @@ import android.graphics.Paint;
 
 import io.github.brenofrocha.cupvisitors.R;
 import io.github.brenofrocha.cupvisitors.Views.MainView;
+import io.github.brenofrocha.cupvisitors.Views.MenuView;
 
 /**
  * Created by Breno on 02/08/2016.
@@ -15,28 +16,30 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class Background
 {
-    private Bitmap backgroundImage, resizedBackground;
+    private Bitmap backgroundImage;
     private float posY1, posY2;
+    private int screenX, screenY;
 
-    public Background(Context c) {
+    public Background(Context c, int screenX, int screenY) {
+        this.screenX = screenX;
+        this.screenY = screenY;
         posY1 = 0;
-        posY2 = -MainView.screenY;
-        backgroundImage = BitmapFactory.decodeResource(c.getResources(), R.drawable.space);
-        resizedBackground = Bitmap.createScaledBitmap(backgroundImage, MainView.screenX, MainView.screenY, false);
+        posY2 = -screenY;
+        backgroundImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.space), screenX,screenY, false);
     }
 
-    public void Draw(Canvas canvas, Paint p) {
-        canvas.drawBitmap(resizedBackground, 0, posY1, p);
-        canvas.drawBitmap(resizedBackground, 0, posY2, p);
+    public void draw(Canvas canvas, Paint p) {
+        canvas.drawBitmap(backgroundImage, 0, posY1, p);
+        canvas.drawBitmap(backgroundImage, 0, posY2, p);
     }
 
-    public void Update() {
-        if (posY1 >= MainView.screenY) {
-            posY1 = -MainView.screenY;
-        } else if (posY2 >= MainView.screenY) {
-            posY2 = -MainView.screenY;
+    public void update() {
+        if (posY1 >= screenY) {
+            posY1 = -screenY;
+        } else if (posY2 >= screenY) {
+            posY2 = -screenY;
         }
-        posY1 += MainView.screenY / 100;
-        posY2 += MainView.screenY / 100;
+        posY1 += screenY / 100;
+        posY2 += screenY / 100;
     }
 }

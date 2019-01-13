@@ -81,9 +81,15 @@ public class MainView extends View implements Runnable
                 enemies[i][j] = new Enemy(((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id);
             }
         }
+
+        //Player
         player = new Player(ctx);
+
+        //Shoot
         shoot = new Shoot(ctx,player.sizeY);
-        background = new Background(ctx);
+
+        //Background
+        background = new Background(ctx, screenX, screenY);
         shootButton = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shootbutton);
         resizedShootButton = Bitmap.createScaledBitmap(shootButton, (int)(screenX/6.5f),screenY/4, false);
         posBSX = screenX-resizedShootButton.getWidth() - screenX /150;
@@ -187,7 +193,7 @@ public class MainView extends View implements Runnable
     protected void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
-        background.Draw(canvas, p);
+        background.draw(canvas, p);
         canvas.drawRect(screenX - enemySizeX * 3, 0, screenX, screenY, p);
         for(int i = 0; i < linesOfEnemies; i++)
         {
@@ -201,9 +207,9 @@ public class MainView extends View implements Runnable
 
     }
 
-    private void Update()
+    private void update()
     {
-        background.Update();
+        background.update();
 
         //Shoot
         shoot.Update(player.posX + player.sizeX/4f,player.sizeY);
@@ -242,7 +248,7 @@ public class MainView extends View implements Runnable
     public void run()
     {
         handler.postDelayed(this, 30);
-        Update();
+        update();
         invalidate();
     }
 }
