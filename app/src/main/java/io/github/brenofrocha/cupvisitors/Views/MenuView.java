@@ -6,15 +6,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import io.github.brenofrocha.cupvisitors.Activities.AboutActivity;
 import io.github.brenofrocha.cupvisitors.Activities.MainActivity;
-import io.github.brenofrocha.cupvisitors.Activities.MenuActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
 import io.github.brenofrocha.cupvisitors.Classes.Button;
 import io.github.brenofrocha.cupvisitors.R;
@@ -33,13 +34,17 @@ public class MenuView extends View implements Runnable
     private Paint p;
     private Bitmap menuArt;
     private Context ctx;
-    private Activity act;
 
-    public MenuView(Context ctx, Activity act)
+    //Fade
+    public int alpha;
+    public boolean fadeIn, fadeOut;
+    public String sceneFade;
+    private Paint paintFade;
+
+    public MenuView(Context ctx)
     {
         super(ctx);
         this.ctx = ctx;
-        this.act = act;
 
         //General
         handler = new android.os.Handler();
@@ -51,6 +56,13 @@ public class MenuView extends View implements Runnable
                 .getMetrics(display);
         screenX = display.widthPixels;
         screenY = display.heightPixels;
+
+        //Fade
+        alpha = 255;
+        paintFade = new Paint();
+        paintFade.setColor(Color.BLACK);
+        paintFade.setAlpha(alpha);
+        fadeIn = true;
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -91,18 +103,22 @@ public class MenuView extends View implements Runnable
                 touchY >= pBPosY &&
                 touchY <= pBPosY + bSizeY)
                 {
-                    Intent i = new Intent(ctx, MainActivity.class);
-                    ctx.startActivity(i);
-                    act.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(!fadeOut && !fadeIn) {
+                        alpha = 0;
+                        sceneFade = "game";
+                        fadeOut = true;
+                    }
                 }
                 else if(touchX >= aBPosX &&
                 touchX <= aBPosX + bSizeX &&
                 touchY >= aBPosY &&
                 touchY <= aBPosY + bSizeY)
                 {
-                    Intent i = new Intent(ctx, AboutActivity.class);
-                    ctx.startActivity(i);
-                    act.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(!fadeOut && !fadeIn) {
+                        alpha = 0;
+                        sceneFade = "about";
+                        fadeOut = true;
+                    }
                 }
                 break;
         }
@@ -112,6 +128,12 @@ public class MenuView extends View implements Runnable
     private void update()
     {
         background.update();
+        if(fadeIn) {
+            setFadeIn();
+        }
+        else if(fadeOut) {
+            setFadeOut();
+        }
     }
 
     @Override
@@ -122,6 +144,7 @@ public class MenuView extends View implements Runnable
         playButton.draw(canvas, p);
         aboutButton.draw(canvas, p);
         instructionsButton.draw(canvas, p);
+        canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
     @Override
@@ -130,5 +153,44 @@ public class MenuView extends View implements Runnable
         handler.postDelayed(this, 30);
         update();
         invalidate();
+    }
+
+    //Fade
+    private void setFadeIn()
+    {
+        if(fadeOut)
+        {
+            fadeIn = false;
+        }
+        if(fadeIn)
+        {
+            alpha -= 5;
+            paintFade.setAlpha(alpha);
+            if(alpha == 0)
+            {
+                fadeIn = false;
+            }
+        }
+    }
+
+    private void setFadeOut()
+    {
+        alpha += 5;
+        paintFade.setAlpha(alpha);
+        if(alpha >= 255)
+        {
+            fadeOut = false;
+            Intent i = new Intent();
+            switch (sceneFade)
+            {
+                case "game":
+                    i = new Intent(ctx, MainActivity.class);
+                    break;
+                case "about":
+                    i = new Intent(ctx, AboutActivity.class);
+                    break;
+            }
+            ctx.startActivity(i);
+        }
     }
 }

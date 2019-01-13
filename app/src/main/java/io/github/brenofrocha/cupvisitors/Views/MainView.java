@@ -2,9 +2,11 @@ package io.github.brenofrocha.cupvisitors.Views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
@@ -14,6 +16,8 @@ import android.view.View;
 
 import java.util.Random;
 
+import io.github.brenofrocha.cupvisitors.Activities.AboutActivity;
+import io.github.brenofrocha.cupvisitors.Activities.MainActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
 import io.github.brenofrocha.cupvisitors.Classes.Enemy;
 import io.github.brenofrocha.cupvisitors.Classes.Player;
@@ -37,10 +41,18 @@ public class MainView extends View implements Runnable
     private Shoot shoot;
     private Paint p;
     private Bitmap shootButton,resizedShootButton, resizedEnemyImage;
+    private Context ctx;
+
+    //Fade
+    public int alpha;
+    public boolean fadeIn, fadeOut;
+    public String sceneFade;
+    private Paint paintFade;
 
     public MainView(Context ctx)
     {
         super(ctx);
+        this.ctx = ctx;
         handler = new android.os.Handler();
         handler.post(this);
         DisplayMetrics display = new DisplayMetrics();
@@ -50,6 +62,13 @@ public class MainView extends View implements Runnable
         screenX = display.widthPixels;
         screenY = display.heightPixels;
         p = new Paint();
+
+        //Fade
+        alpha = 255;
+        paintFade = new Paint();
+        paintFade.setColor(Color.BLACK);
+        paintFade.setAlpha(alpha);
+        fadeIn = true;
 
         //Enemy
         enemiesVelocityX = 1;
@@ -204,7 +223,7 @@ public class MainView extends View implements Runnable
         canvas.drawBitmap(resizedShootButton, posBSX, posBSY, p);
         shoot.Draw(canvas,p);
         player.Draw(canvas,p);
-
+        canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
     private void update()
@@ -242,6 +261,13 @@ public class MainView extends View implements Runnable
 
         //Player
         player.Update();
+
+        if(fadeIn) {
+            setFadeIn();
+        }
+        else if(fadeOut) {
+            setFadeOut();
+        }
     }
 
     @Override
@@ -250,5 +276,41 @@ public class MainView extends View implements Runnable
         handler.postDelayed(this, 30);
         update();
         invalidate();
+    }
+
+    //Fade
+    private void setFadeIn()
+    {
+        if(fadeOut)
+        {
+            fadeIn = false;
+        }
+        if(fadeIn)
+        {
+            alpha -= 5;
+            paintFade.setAlpha(alpha);
+            if(alpha == 0)
+            {
+                fadeIn = false;
+            }
+        }
+    }
+
+    private void setFadeOut()
+    {
+        alpha += 5;
+        paintFade.setAlpha(alpha);
+        if(alpha >= 255)
+        {
+            fadeOut = false;
+            Intent i = new Intent();
+            switch (sceneFade)
+            {
+                case "game":
+                    i = new Intent(ctx, MainActivity.class);
+                    break;
+            }
+            ctx.startActivity(i);
+        }
     }
 }

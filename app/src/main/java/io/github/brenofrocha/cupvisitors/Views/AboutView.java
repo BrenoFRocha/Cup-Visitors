@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -33,6 +34,12 @@ public class AboutView extends View implements Runnable
     private Context ctx;
     private Activity act;
 
+    //Fade
+    public int alpha;
+    public boolean fadeIn, fadeOut;
+    public String sceneFade;
+    private Paint paintFade;
+
     public AboutView(Context ctx, Activity act)
     {
         super(ctx);
@@ -50,15 +57,22 @@ public class AboutView extends View implements Runnable
         screenX = display.widthPixels;
         screenY = display.heightPixels;
 
+        //Fade
+        alpha = 255;
+        paintFade = new Paint();
+        paintFade.setColor(Color.BLACK);
+        paintFade.setAlpha(alpha);
+        fadeIn = true;
+
         //Background
         background = new Background(ctx, screenX, screenY);
 
         //Buttons
         bSizeX = (int)((screenX*0.557f)/7f);
         bSizeY = (int)((screenY*1.0694f)/7f);
-        mBPosX = (int)(screenX/2 - bSizeX/1.8);
-        mBPosY = (int)(screenY/2 + bSizeY*1.6f);
-        Bitmap menuBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.play_button), bSizeX, bSizeY, false);
+        mBPosX = (int)(screenX/2 - bSizeX/1.8f);
+        mBPosY = (int)(screenY/2 + bSizeY*1.8f);
+        Bitmap menuBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX, bSizeY, false);
         menuButton = new Button(mBPosX, mBPosY, menuBImage);
 
         //About
@@ -81,9 +95,11 @@ public class AboutView extends View implements Runnable
                         touchY >= mBPosY &&
                         touchY <= mBPosY + bSizeY)
                 {
-                    Intent i = new Intent(ctx, MenuActivity.class);
-                    ctx.startActivity(i);
-                    act.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(!fadeOut && !fadeIn) {
+                        alpha = 0;
+                        sceneFade = "menu";
+                        fadeOut = true;
+                    }
                 }
                 break;
         }
@@ -93,6 +109,12 @@ public class AboutView extends View implements Runnable
     private void update()
     {
         background.update();
+        if(fadeIn) {
+            setFadeIn();
+        }
+        else if(fadeOut) {
+            setFadeOut();
+        }
     }
 
     @Override
@@ -101,6 +123,7 @@ public class AboutView extends View implements Runnable
         background.draw(canvas, p);
         canvas.drawBitmap(aboutArt, 0, 0, p);
         menuButton.draw(canvas, p);
+        canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
     @Override
@@ -109,5 +132,41 @@ public class AboutView extends View implements Runnable
         handler.postDelayed(this, 30);
         update();
         invalidate();
+    }
+
+    //Fade
+    private void setFadeIn()
+    {
+        if(fadeOut)
+        {
+            fadeIn = false;
+        }
+        if(fadeIn)
+        {
+            alpha -= 5;
+            paintFade.setAlpha(alpha);
+            if(alpha == 0)
+            {
+                fadeIn = false;
+            }
+        }
+    }
+
+    private void setFadeOut()
+    {
+        alpha += 5;
+        paintFade.setAlpha(alpha);
+        if(alpha >= 255)
+        {
+            fadeOut = false;
+            Intent i = new Intent();
+            switch (sceneFade)
+            {
+                case "menu":
+                    i = new Intent(ctx, MenuActivity.class);
+                    break;
+            }
+            ctx.startActivity(i);
+        }
     }
 }
