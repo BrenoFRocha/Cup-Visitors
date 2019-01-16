@@ -3,8 +3,6 @@ package io.github.brenofrocha.cupvisitors.Classes;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Debug;
-import android.util.Log;
 
 import io.github.brenofrocha.cupvisitors.Views.MainView;
 
@@ -15,13 +13,14 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 public class Enemy
 {
     private Bitmap enemyImage;
+    private Shoot shoot;
     public float posX, posY;
     private float sizeX,sizeY;
-    public boolean isDestroyed;
-    public static boolean destroyShoot;
+    private boolean isDestroyed;
 
-    public Enemy(float posX, float posY, Bitmap image, int index)
+    public Enemy(float posX, float posY, Bitmap image, int index, Shoot shoot)
     {
+        this.shoot = shoot;
         this.posX = posX;
         this.posY = posY;
         isDestroyed = false;
@@ -42,14 +41,20 @@ public class Enemy
         posX += MainView.enemiesVelocityX;
         if(!isDestroyed)
         {
-            if(posShootX >= posX - sizeX/3 &&
-                    posShootX + sizeShootX <= posX + sizeX + sizeX/3 &&
-                    posShootY >= posY - sizeY/3 &&
-                    posShootY + sizeShootY <= posY + sizeY + sizeY/3)
+            if(posShootX >= posX - sizeX/2f &&
+                    posShootX + sizeShootX <= posX + sizeX + sizeX/2f &&
+                    posShootY >= posY - sizeY/2f &&
+                    posShootY + sizeShootY <= posY + sizeY + sizeY/2f)
             {
-                destroyShoot = true;
                 isDestroyed = true;
+                destroyShoot();
             }
         }
+    }
+
+    private void destroyShoot()
+    {
+        shoot.thereIsAShoot = false;
+        shoot.posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
     }
 }

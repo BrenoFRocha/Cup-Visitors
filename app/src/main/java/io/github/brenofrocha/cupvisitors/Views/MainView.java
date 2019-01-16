@@ -95,6 +95,12 @@ public class MainView extends View implements Runnable
         nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
         noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
 
+        //Player
+        player = new Player(ctx);
+
+        //Shoot
+        shoot = new Shoot(ctx);
+
         //Enemy
         enemiesVelocityX = 1;
         linesOfEnemies = 8;
@@ -122,15 +128,9 @@ public class MainView extends View implements Runnable
                 int id = r.nextInt(10);
                 resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                 enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                enemies[i][j] = new Enemy(((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id);
+                enemies[i][j] = new Enemy(((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
-
-        //Player
-        player = new Player(ctx);
-
-        //Shoot
-        shoot = new Shoot(ctx,player.sizeY);
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -171,6 +171,7 @@ public class MainView extends View implements Runnable
                         touchY >= sBPosY &&
                         touchY <= sBPosY + bSizeY)
                 {
+                    shoot.thereIsAShoot = true;
                     shootPressed = true;
                 }
                 break;
@@ -250,7 +251,7 @@ public class MainView extends View implements Runnable
         background.update();
 
         //Shoot
-        shoot.Update(player.posX + player.sizeX/4f,player.sizeY);
+        shoot.Update((player.posX + player.sizeX/2) - (shoot.sizeX/2));
 
         //Enemies
         boolean closer = false;

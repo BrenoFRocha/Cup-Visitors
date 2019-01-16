@@ -15,33 +15,25 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class Shoot
 {
-    private Bitmap shootImage,resizedShootImage;
-    public static boolean thereIsAShoot;
+    private Bitmap shootImage;
+    public boolean thereIsAShoot;
     public float posX, posY;
-    public int sizeX,sizeY, screenY;
+    public int sizeX, sizeY;
 
-    public Shoot(Context ctx,float SizeYPLayer)
+    public Shoot(Context ctx)
     {
         thereIsAShoot = false;
-        shootImage = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.shoot);
-        sizeX = (int)(MainView.screenX/(6.5f*5.5f));
-        sizeY = (int)(MainView.screenY/20);
-        this.screenY = MainView.screenY;
-        resizedShootImage = Bitmap.createScaledBitmap(shootImage, sizeX, sizeY, false);
-        posY = MainView.screenY - SizeYPLayer * 1.2f;
+        sizeX = (int)(MainView.screenX/30);
+        sizeY = (int)(MainView.screenX/30);
+        shootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.shoot), sizeX, sizeY, false);
+        posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
     }
-    public void Update(float PosX,float SizeYPLayer)
+    public void Update(float PosX)
     {
-        if(Enemy.destroyShoot)
-        {
-            thereIsAShoot = false;
-            Enemy.destroyShoot = false;
-            posY = MainView.screenY - SizeYPLayer * 1.2f;
-        }
         if(posY < -sizeY && thereIsAShoot)
         {
             thereIsAShoot = false;
-            posY = MainView.screenY - SizeYPLayer * 1.2f;
+            posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
         }
         if(thereIsAShoot)
         {
@@ -50,7 +42,7 @@ public class Shoot
         else
         {
             posX = PosX;
-            posY = MainView.screenY - SizeYPLayer * 1.2f;
+            posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
         }
     }
 
@@ -58,7 +50,7 @@ public class Shoot
     {
         if(thereIsAShoot)
         {
-            canvas.drawBitmap(resizedShootImage, posX, posY, p);
+            canvas.drawBitmap(shootImage, posX, posY, p);
         }
     }
 }
