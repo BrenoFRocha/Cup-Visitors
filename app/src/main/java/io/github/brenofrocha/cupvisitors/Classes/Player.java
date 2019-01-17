@@ -15,23 +15,22 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class Player
 {
-    private Bitmap playerImage,playerResizedImage;
+    private Bitmap playerImage;
     public float posX,sizeX,sizeY, velocity;
     public boolean MoveRight,MoveLeft;
 
     public Player(Context c)
     {
-        playerImage = BitmapFactory.decodeResource(c.getResources(), R.drawable.spaceship);
-        playerResizedImage = Bitmap.createScaledBitmap(playerImage, (int) (MainView.screenX / 15.5f), (int) (MainView.screenY / 8f), false);
-        sizeX = playerResizedImage.getWidth();
-        sizeY = playerResizedImage.getHeight();
+        playerImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.player), (int) (MainView.screenX/15f), (int) (MainView.screenX/15f), false);
+        sizeX = playerImage.getWidth();
+        sizeY = playerImage.getHeight();
         posX = MainView.screenX/2 - sizeX/2 - (MainView.enemySizeX*1.5f);
         velocity = 3f;
     }
 
     public void Draw(Canvas canvas, Paint p)
     {
-        canvas.drawBitmap(playerResizedImage,posX, MainView.screenY - sizeY*1.05f, p);
+        canvas.drawBitmap(playerImage,posX, MainView.screenY - sizeY*1.05f, p);
     }
 
     public void Update()
