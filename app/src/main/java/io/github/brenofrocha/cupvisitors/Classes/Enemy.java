@@ -27,7 +27,8 @@ public class Enemy
     public float posX, posY;
     private float sizeX,sizeY, shootVelocity, shootX, shootY, shootDamage;
     private int sizeShootX, sizeShootY, max, number, period;
-    private boolean isDestroyed, isShooting;
+    public boolean isDestroyed;
+    private boolean isShooting;
     private final Random random;
 
     public Enemy(Context ctx, float posX, float posY, Bitmap image, int index, Shoot shoot)

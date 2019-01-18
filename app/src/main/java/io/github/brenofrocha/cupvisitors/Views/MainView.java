@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -236,8 +237,6 @@ public class MainView extends View implements Runnable
                 canvas.drawBitmap(lifeImage, ((cSSizeX*1.2f)*i), (screenY - lifeImage.getHeight()*1.2f), p);
             }
         }
-        //(int)((screenX - enemySizeX * 3) + ((cSSizeX*1.2f)*i) + screenX/57.5f)
-        //screenY/50
         menuButton.draw(canvas,p);
         if(shootPressed)
         {
@@ -270,23 +269,21 @@ public class MainView extends View implements Runnable
         for(int i = 0; i < linesOfEnemies; i++)
         {
             for(int j = 0; j < columnsOfEnemies; j++) {
-                if (enemies[i][j].posX <= 0 ||
-                    enemies[i][j].posX + enemySizeX > (screenX - (enemySizeX * 3)))
-                {
-                    enemiesVelocityX *= -1;
-                    for(int k = 0; k < linesOfEnemies; k++) {
-                        for (int l = 0; l < columnsOfEnemies; l++) {
-                            if(enemiesVelocityX < 1)
-                            {
-                                enemies[k][l].posX -= 2;
-                            }
-                            else
-                            {
-                                enemies[k][l].posX += 2;
+                if(!enemies[i][j].isDestroyed) {
+                    if (enemies[i][j].posX <= 0 ||
+                            enemies[i][j].posX + enemySizeX > (screenX - (enemySizeX * 3))) {
+                        enemiesVelocityX *= -1;
+                        for (int k = 0; k < linesOfEnemies; k++) {
+                            for (int l = 0; l < columnsOfEnemies; l++) {
+                                if (enemiesVelocityX < 1) {
+                                    enemies[k][l].posX -= 2;
+                                } else {
+                                    enemies[k][l].posX += 2;
+                                }
                             }
                         }
+                        closer = true;
                     }
-                    closer = true;
                 }
             }
         }
