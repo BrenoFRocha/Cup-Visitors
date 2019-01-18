@@ -41,19 +41,17 @@ public class Player
 
     public void update()
     {
-        if(life <= 0)
-        {
-            dead = true;
+        if(!dead) {
+            if (life <= 0) {
+                dead = true;
+            }
+            if (MoveRight && posX + sizeX <= MainView.screenX - MainView.enemySizeX * 3 - MainView.screenX / 250) {
+                posX += velocity;
+            } else if (MoveLeft && posX >= MainView.screenX / 250) {
+                posX -= velocity;
+            }
+            checkRange();
         }
-        if(MoveRight && posX + sizeX <= MainView.screenX - MainView.enemySizeX*3 - MainView.screenX/250)
-        {
-            posX += velocity;
-        }
-        else if(MoveLeft && posX >= MainView.screenX/250)
-        {
-            posX -= velocity;
-        }
-        checkRange();
     }
 
     private void checkRange()
