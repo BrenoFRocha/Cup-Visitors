@@ -73,28 +73,6 @@ public class MainView extends View implements Runnable
 
         Bitmap sBImage, sPBImage, mBImage, sdBImage, nosdBImage, resizedEnemyImage;
 
-        //Buttons
-        bSizeX = (int)((screenX*0.557f)/5f);
-        bSizeY = (int)((screenY*1.0694f)/5f);
-        bPosX = (int)((screenX - (enemySizeX * 3)) + (enemySizeX * 3/2) - (bSizeX/2));
-        //Menu Button
-        mBPosY = (int)(bSizeY*0.20f);
-        mBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX,bSizeY, false);
-        menuButton = new Button(bPosX, mBPosY, mBImage);
-        //Shoot Button
-        sBPosY = (int)(screenY - (bSizeY*1.20f));
-        sBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button), bSizeX,bSizeY, false);
-        sPBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button_pressed), bSizeX,bSizeY, false);
-        shootButton = new Button(bPosX, sBPosY, sBImage);
-        shootButtonPressed = new Button(bPosX, sBPosY, sPBImage);
-        //Sound Buttons
-        sound = true;
-        sdBPosY = (int)((screenY/2) - bSizeY/2);
-        sdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), bSizeX,bSizeY, false);
-        soundButton = new Button(bPosX, sdBPosY, sdBImage);
-        nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
-        noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
-
         //Player
         player = new Player(ctx);
 
@@ -128,9 +106,32 @@ public class MainView extends View implements Runnable
                 int id = r.nextInt(10);
                 resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                 enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                enemies[i][j] = new Enemy(((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
+
+        //Buttons
+        bSizeX = (int)((screenX*0.557f)/5f);
+        bSizeY = (int)((screenY*1.0694f)/5f);
+        bPosX = (int)(((screenX - (enemySizeX * 3)) + ((enemySizeX * 3)/2)) - (bSizeX/2));
+
+        //Shoot Button
+        sBPosY = (int)(screenY - (bSizeY*1.20f));
+        sBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button), bSizeX,bSizeY, false);
+        sPBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button_pressed), bSizeX,bSizeY, false);
+        shootButton = new Button(bPosX, sBPosY, sBImage);
+        shootButtonPressed = new Button(bPosX, sBPosY, sPBImage);
+        //Sound Buttons
+        sound = true;
+        sdBPosY = (int)(sBPosY - bSizeY*1.20f);
+        sdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), bSizeX,bSizeY, false);
+        soundButton = new Button(bPosX, sdBPosY, sdBImage);
+        nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
+        noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
+        //Menu Button
+        mBPosY = (int)(sdBPosY - bSizeY*1.20f);
+        mBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX,bSizeY, false);
+        menuButton = new Button(bPosX, mBPosY, mBImage);
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -221,11 +222,11 @@ public class MainView extends View implements Runnable
         for(int i = 0; i < linesOfEnemies; i++)
         {
             for(int j = 0; j < columnsOfEnemies; j++) {
-                enemies[i][j].Draw(canvas, p, enemyPosY[i]);
+                enemies[i][j].draw(canvas, p, enemyPosY[i]);
             }
         }
         shoot.Draw(canvas,p);
-        player.Draw(canvas,p);
+        player.draw(canvas,p);
         menuButton.draw(canvas,p);
         if(shootPressed)
         {
@@ -288,12 +289,12 @@ public class MainView extends View implements Runnable
         for(int i = 0; i < linesOfEnemies; i++)
         {
             for(int j = 0; j < columnsOfEnemies; j++) {
-                enemies[i][j].Update(shoot.posX, shoot.posY, shoot.sizeX, shoot.sizeY);
+                enemies[i][j].update(shoot.posX, shoot.posY, shoot.sizeX, shoot.sizeY, player);
             }
         }
 
         //Player
-        player.Update();
+        player.update();
 
         if(fadeIn) {
             setFadeIn();

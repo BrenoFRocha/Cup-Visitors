@@ -16,25 +16,35 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 public class Player
 {
     private Bitmap playerImage;
-    public float posX,sizeX,sizeY, velocity;
+    public float posX, posY, sizeX,sizeY, velocity, rangeLife;
+    public int life;
     public boolean MoveRight,MoveLeft;
-
+    private boolean dead;
     public Player(Context c)
     {
+        dead = false;
+        life = 5;
         playerImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.player), (int) (MainView.screenX/15f), (int) (MainView.screenX/15f), false);
         sizeX = playerImage.getWidth();
         sizeY = playerImage.getHeight();
         posX = MainView.screenX/2 - sizeX/2 - (MainView.enemySizeX*1.5f);
-        velocity = 3f;
+        posY = MainView.screenY - sizeY * 1.05f;
+        velocity = 10f;
     }
 
-    public void Draw(Canvas canvas, Paint p)
+    public void draw(Canvas canvas, Paint p)
     {
-        canvas.drawBitmap(playerImage,posX, MainView.screenY - sizeY*1.05f, p);
+        if(!dead) {
+            canvas.drawBitmap(playerImage, posX, posY, p);
+        }
     }
 
-    public void Update()
+    public void update()
     {
+        if(life <= 0)
+        {
+            dead = true;
+        }
         if(MoveRight && posX + sizeX <= MainView.screenX - MainView.enemySizeX*3 - MainView.screenX/250)
         {
             posX += velocity;
@@ -42,6 +52,15 @@ public class Player
         else if(MoveLeft && posX >= MainView.screenX/250)
         {
             posX -= velocity;
+        }
+    }
+
+    private void checkRange()
+    {
+        if(rangeLife >= 1)
+        {
+            rangeLife = 0;
+            life -= 1;
         }
     }
 }

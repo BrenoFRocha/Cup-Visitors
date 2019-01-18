@@ -23,8 +23,8 @@ public class Shoot
     public Shoot(Context ctx)
     {
         thereIsAShoot = false;
-        sizeX = (int)(MainView.screenX/50);
-        sizeY = (int)(MainView.screenX/50);
+        sizeX = (int)(MainView.screenX/30);
+        sizeY = (int)(MainView.screenX/30);
         shootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil_ball), sizeX, sizeY, false);
         posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
     }
