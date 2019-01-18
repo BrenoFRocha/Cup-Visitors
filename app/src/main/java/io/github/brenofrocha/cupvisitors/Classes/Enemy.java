@@ -80,7 +80,7 @@ public class Enemy
             }
             if(!isShooting)
             {
-                if(number < 5)
+                if(number < 15)
                 {
                     number = 1000;
                     shootX = ((posX + (sizeX/2)) - sizeShootX/2);
@@ -183,6 +183,11 @@ public class Enemy
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.italy_ball), sizeShootX, sizeShootY, false);
                 shootVelocity = 10f;
                 shootDamage = 4f;
+                break;
+            case 10:
+                enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil_ball), sizeShootX, sizeShootY, false);
+                shootVelocity = 5f;
+                shootDamage = 5f;
                 break;
         }
     }
