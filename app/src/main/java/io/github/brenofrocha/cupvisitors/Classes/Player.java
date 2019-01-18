@@ -27,9 +27,9 @@ public class Player
         playerImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.player), (int) (MainView.screenX/15f), (int) (MainView.screenX/15f), false);
         sizeX = playerImage.getWidth();
         sizeY = playerImage.getHeight();
-        posX = MainView.screenX/2 - sizeX/2 - (MainView.enemySizeX*1.5f);
-        posY = MainView.screenY - sizeY * 1.05f;
-        velocity = 10f;
+        posX = ((MainView.screenX)/2) - ((MainView.enemySizeX*3)/2) - sizeX/2;
+        posY = MainView.screenY - sizeY * 1.75f;
+        velocity = 20f;
     }
 
     public void draw(Canvas canvas, Paint p)
@@ -53,6 +53,7 @@ public class Player
         {
             posX -= velocity;
         }
+        checkRange();
     }
 
     private void checkRange()

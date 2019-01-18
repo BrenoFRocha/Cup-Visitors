@@ -28,12 +28,12 @@ public class Shoot
         shootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil_ball), sizeX, sizeY, false);
         posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
     }
-    public void Update(float PosX)
+    public void update(float PosX, float pPosY, float pSizeY)
     {
         if(posY < -sizeY && thereIsAShoot)
         {
             thereIsAShoot = false;
-            posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
+            posY = (pPosY + pSizeY/2) - sizeY/2;
         }
         if(thereIsAShoot)
         {
@@ -42,11 +42,11 @@ public class Shoot
         else
         {
             posX = PosX;
-            posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
+            posY = (pPosY + pSizeY/2) - sizeY/2;
         }
     }
 
-    public void Draw(Canvas canvas, Paint p)
+    public void draw(Canvas canvas, Paint p)
     {
         if(thereIsAShoot)
         {

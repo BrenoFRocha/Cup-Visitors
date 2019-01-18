@@ -30,7 +30,7 @@ import io.github.brenofrocha.cupvisitors.R;
 public class MainView extends View implements Runnable
 {
     Handler handler;
-    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX;
+    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX, cSSizeX, cSSizeY;
     public static int screenX,screenY, enemiesVelocityX;
     private float[] enemyPosY;
     public static float enemySizeX;
@@ -43,6 +43,7 @@ public class MainView extends View implements Runnable
     private Paint p;
     private Context ctx;
     private Bitmap backgroundGMImage;
+    private Bitmap lifeImage;
 
     //Fade
     public int alpha;
@@ -72,15 +73,16 @@ public class MainView extends View implements Runnable
         fadeIn = true;
 
         Bitmap sBImage, sPBImage, mBImage, sdBImage, nosdBImage, resizedEnemyImage;
+        cSSizeX = (((screenX/30)/4)*3);
+        cSSizeY = (screenX/30);
+        lifeImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.cup_symbol), cSSizeX, cSSizeY, false);
 
-        //Player
-        player = new Player(ctx);
 
         //Shoot
         shoot = new Shoot(ctx);
 
         //Enemy
-        enemiesVelocityX = 1;
+        enemiesVelocityX = 2;
         linesOfEnemies = 8;
         columnsOfEnemies = 9;
         Bitmap[] enemyImages = new Bitmap[10];
@@ -96,6 +98,9 @@ public class MainView extends View implements Runnable
         enemyImages[8] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.germany);
         enemyImages[9] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.italy);
         enemySizeX = screenX/enemyImages[0].getWidth()*2.5f;
+        //Player
+        player = new Player(ctx);
+        //Enemy
         float enemySizeY = screenY/enemyImages[0].getHeight()*2.2f;
         enemies = new Enemy[linesOfEnemies][columnsOfEnemies];
         for(int i = 0; i < linesOfEnemies; i++)
@@ -114,7 +119,10 @@ public class MainView extends View implements Runnable
         bSizeX = (int)((screenX*0.557f)/5f);
         bSizeY = (int)((screenY*1.0694f)/5f);
         bPosX = (int)(((screenX - (enemySizeX * 3)) + ((enemySizeX * 3)/2)) - (bSizeX/2));
-
+        //Menu Button
+        mBPosY = (int)(bSizeY*0.20f);
+        mBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX,bSizeY, false);
+        menuButton = new Button(bPosX, mBPosY, mBImage);
         //Shoot Button
         sBPosY = (int)(screenY - (bSizeY*1.20f));
         sBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.shoot_button), bSizeX,bSizeY, false);
@@ -123,15 +131,11 @@ public class MainView extends View implements Runnable
         shootButtonPressed = new Button(bPosX, sBPosY, sPBImage);
         //Sound Buttons
         sound = true;
-        sdBPosY = (int)(sBPosY - bSizeY*1.20f);
+        sdBPosY = (int)((screenY/2) - bSizeY/2);
         sdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), bSizeX,bSizeY, false);
         soundButton = new Button(bPosX, sdBPosY, sdBImage);
         nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
         noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
-        //Menu Button
-        mBPosY = (int)(sdBPosY - bSizeY*1.20f);
-        mBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX,bSizeY, false);
-        menuButton = new Button(bPosX, mBPosY, mBImage);
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -225,8 +229,15 @@ public class MainView extends View implements Runnable
                 enemies[i][j].draw(canvas, p, enemyPosY[i]);
             }
         }
-        shoot.Draw(canvas,p);
+        shoot.draw(canvas,p);
         player.draw(canvas,p);
+        if(player.life >= 1) {
+            for (int i = 0; i < player.life; i++) {
+                canvas.drawBitmap(lifeImage, ((cSSizeX*1.2f)*i), (screenY - lifeImage.getHeight()*1.2f), p);
+            }
+        }
+        //(int)((screenX - enemySizeX * 3) + ((cSSizeX*1.2f)*i) + screenX/57.5f)
+        //screenY/50
         menuButton.draw(canvas,p);
         if(shootPressed)
         {
@@ -252,7 +263,7 @@ public class MainView extends View implements Runnable
         background.update();
 
         //Shoot
-        shoot.Update((player.posX + player.sizeX/2) - (shoot.sizeX/2));
+        shoot.update((player.posX + player.sizeX/2) - (shoot.sizeX/2), player.posY, player.sizeY);
 
         //Enemies
         boolean closer = false;
