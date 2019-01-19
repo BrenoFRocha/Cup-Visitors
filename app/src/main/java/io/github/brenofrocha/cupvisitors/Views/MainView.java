@@ -113,7 +113,19 @@ public class MainView extends View implements Runnable
         //Enemy
         enemySizeY = screenY/enemyImages[0].getHeight()*2.2f;
         enemies = new Enemy[linesOfEnemies][columnsOfEnemies];
-        level = 7;
+        min = 0;
+        max = 2;
+        for(int i = 0; i < linesOfEnemies; i++)
+        {
+            for(int j = 0; j < columnsOfEnemies; j++)
+            {
+                int id = r.nextInt(max - min + 1) + min;
+                resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
+                enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+            }
+        }
+        level = 0;
         newLevel();
         //Buttons
         bSizeX = (int)((screenX*0.557f)/5f);
@@ -143,6 +155,8 @@ public class MainView extends View implements Runnable
 
         //Level Manager
         levelManager = new LevelManager(ctx, this);
+
+        levelManager.levelFinished = true;
     }
 
     @Override
@@ -177,7 +191,7 @@ public class MainView extends View implements Runnable
                 else if(touchX >= bPosX &&
                         touchX <= bPosX + bSizeX &&
                         touchY >= sBPosY &&
-                        touchY <= sBPosY + bSizeY && !pause)
+                        touchY <= sBPosY + bSizeY && !pause && player.life > 0)
                 {
                     shoot.thereIsAShoot = true;
                     shootPressed = true;
@@ -278,10 +292,9 @@ public class MainView extends View implements Runnable
 
     private void update()
     {
-        if(!pause)
+        background.update();
+        if(!pause && !levelManager.levelFinished && !levelManager.loadingLevel && !fadeIn && !fadeOut)
         {
-            background.update();
-
             //Shoot
             shoot.update((player.posX + player.sizeX/2) - (shoot.sizeX/2), player.posY, player.sizeY);
 
@@ -383,20 +396,6 @@ public class MainView extends View implements Runnable
     {
         switch (level)
         {
-            case 1:
-                min = 0;
-                max = 2;
-                for(int i = 0; i < linesOfEnemies; i++)
-                {
-                    for(int j = 0; j < columnsOfEnemies; j++)
-                    {
-                        int id = r.nextInt(max - min + 1) + min;
-                        resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
-                    }
-                }
-                break;
             case 2:
                 min = 3;
                 max = 5;

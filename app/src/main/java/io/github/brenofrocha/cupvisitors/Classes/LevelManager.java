@@ -1,6 +1,8 @@
 package io.github.brenofrocha.cupvisitors.Classes;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -9,6 +11,7 @@ import android.graphics.Typeface;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.github.brenofrocha.cupvisitors.R;
 import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class LevelManager
@@ -17,8 +20,10 @@ public class LevelManager
     private Timer timer;
     private MainView mainView;
     private Paint paint;
+    private Bitmap background;
     public boolean loadingLevel, levelFinished;
     private int secondsCounter;
+    final int color = 0xffFEDF00;
 
     public LevelManager(Context ctx, MainView mainView) {
         this.ctx = ctx;
@@ -34,8 +39,9 @@ public class LevelManager
     public void draw(Canvas canvas, Paint p)
     {
         if(loadingLevel) {
-            canvas.drawRect(0, 0, MainView.screenX - MainView.enemySizeX*3, MainView.screenY, p);
-            canvas.drawText(Integer.toString(secondsCounter),(MainView.screenX - MainView.enemySizeX*3)/2,MainView.screenY/2,paint);
+            canvas.drawBitmap(background, 0,0,p);
+            paint.setColor(color);
+            canvas.drawText(Integer.toString(secondsCounter),((MainView.screenX - MainView.enemySizeX*3)/2 - MainView.screenX/30),MainView.screenY/2 + MainView.screenY/5,paint);
         }
     }
 
@@ -43,7 +49,7 @@ public class LevelManager
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(loadingLevel) {
+                if(loadingLevel && !mainView.fadeOut && !mainView.fadeIn) {
                     if (secondsCounter > 0) {
                         secondsCounter -= 1;
                     }
@@ -61,6 +67,7 @@ public class LevelManager
             secondsCounter = 5;
             mainView.level += 1;
             mainView.newLevel();
+            background = backgroundImage(mainView.level);
             loadingLevel = true;
         }
         else if(loadingLevel)
@@ -80,5 +87,35 @@ public class LevelManager
         paint.getTextBounds(text, 0, text.length(), bounds);
         float desiredTextSize = testTextSize * desiredWidth / bounds.width();
         this.paint.setTextSize(desiredTextSize);
+    }
+
+    private Bitmap backgroundImage(int level)
+    {
+        Bitmap image = null;
+        switch (level)
+        {
+            case 1:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level0), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 2:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level1), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 3:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level2), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 4:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level3), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 5:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level4), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 6:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.level5), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+            case 7:
+                image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.special_level), (int)(MainView.screenX - MainView.enemySizeX*3), MainView.screenY,false);
+                break;
+        }
+        return image;
     }
 }
