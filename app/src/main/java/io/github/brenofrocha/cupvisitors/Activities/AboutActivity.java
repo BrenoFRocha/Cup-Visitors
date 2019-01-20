@@ -1,5 +1,6 @@
 package io.github.brenofrocha.cupvisitors.Activities;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,5 +26,23 @@ public class AboutActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        Intent i = new Intent(this, MenuActivity.class);
+        this.finish();
+        startActivity(i);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Intent i = new Intent(this, MenuActivity.class);
+        this.finish();
+        startActivity(i);
     }
 }

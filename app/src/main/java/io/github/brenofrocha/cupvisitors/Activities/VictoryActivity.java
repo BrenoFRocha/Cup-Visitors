@@ -2,17 +2,13 @@ package io.github.brenofrocha.cupvisitors.Activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
-import io.github.brenofrocha.cupvisitors.Views.MainView;
+import io.github.brenofrocha.cupvisitors.Views.AboutView;
 
-/**
- * Created by Breno on 02/08/2016.
- */
-
-public class MainActivity extends AppCompatActivity {
+public class VictoryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +21,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Tela
-        setContentView(new MainView(this));
+        setContentView(new AboutView(this, this));
     }
-
     @Override
     public void onBackPressed() {
     }
+
     @Override
     public void onRestart()
     {

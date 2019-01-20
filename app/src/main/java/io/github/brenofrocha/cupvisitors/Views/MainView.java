@@ -18,6 +18,7 @@ import java.util.Random;
 
 import io.github.brenofrocha.cupvisitors.Activities.GameOverActivity;
 import io.github.brenofrocha.cupvisitors.Activities.MenuActivity;
+import io.github.brenofrocha.cupvisitors.Activities.VictoryActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
 import io.github.brenofrocha.cupvisitors.Classes.Button;
 import io.github.brenofrocha.cupvisitors.Classes.Enemy;
@@ -93,7 +94,7 @@ public class MainView extends View implements Runnable
         shoot = new Shoot(ctx);
 
         //Enemy
-        enemiesVelocityX = 2;
+        enemiesVelocityX = 1;
         linesOfEnemies = 8;
         columnsOfEnemies = 9;
         enemyImages = new Bitmap[11];
@@ -395,6 +396,9 @@ public class MainView extends View implements Runnable
                     i = new Intent(ctx, GameOverActivity.class);
                     i.putExtra("level", level);
                     break;
+                case "victory":
+                    i = new Intent(ctx, VictoryActivity.class);
+                    break;
             }
             ctx.startActivity(i);
         }
@@ -511,6 +515,15 @@ public class MainView extends View implements Runnable
             pause = true;
             alpha = 0;
             sceneFade = "gameover";
+            fadeOut = true;
+        }
+    }
+
+    public void victoryScene()
+    {
+        if(!fadeOut && !fadeIn) {
+            alpha = 0;
+            sceneFade = "victory";
             fadeOut = true;
         }
     }

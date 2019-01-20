@@ -62,17 +62,22 @@ public class LevelManager
     {
         if(levelFinished)
         {
-            levelFinished = false;
-            MainView.pause = true;
-            secondsCounter = 5;
-            mainView.level += 1;
-            if(mainView.level == 6)
-            {
-                player.life = 5;
+            if(mainView.level < 8) {
+                levelFinished = false;
+                MainView.pause = true;
+                secondsCounter = 5;
+                mainView.level += 1;
+                if (mainView.level == 6) {
+                    player.life = 5;
+                }
+                mainView.newLevel();
+                background = backgroundImage(mainView.level);
+                loadingLevel = true;
             }
-            mainView.newLevel();
-            background = backgroundImage(mainView.level);
-            loadingLevel = true;
+            else
+            {
+                mainView.victoryScene();
+            }
         }
         else if(loadingLevel)
         {
