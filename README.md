@@ -1,6 +1,6 @@
 # Cup Visitors
 
-In this repository, you can know the project in tribute to 2014 FIFA World Cup (that occurred in Brazil) and the classic game Space Invaders.
+In this repository, you can know the project in tribute to 2014 FIFA World Cup (that occurred in Brazil) and the classic game Space Invaders. This is a nonprofit project.
 
 ### About
 
