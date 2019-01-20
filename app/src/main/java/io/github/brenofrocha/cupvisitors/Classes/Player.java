@@ -15,13 +15,15 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class Player
 {
+    private MainView mainView;
     private Bitmap playerImage;
     public float posX, posY, sizeX,sizeY, velocity, rangeLife;
     public int life;
     public boolean MoveRight,MoveLeft;
     private boolean dead;
-    public Player(Context c)
+    public Player(Context c, MainView mainView)
     {
+        this.mainView = mainView;
         dead = false;
         life = 5;
         playerImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.player), (int) (MainView.screenX/15f), (int) (MainView.screenX/15f), false);
@@ -51,6 +53,7 @@ public class Player
                 posX -= velocity;
             }
             checkRange();
+            checkLife();
         }
     }
 
@@ -60,6 +63,14 @@ public class Player
         {
             rangeLife = 0;
             life -= 1;
+        }
+    }
+
+    private void checkLife()
+    {
+        if(dead)
+        {
+            mainView.gameOver();
         }
     }
 }

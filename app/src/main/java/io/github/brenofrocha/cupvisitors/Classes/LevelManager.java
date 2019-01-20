@@ -41,7 +41,7 @@ public class LevelManager
         if(loadingLevel) {
             canvas.drawBitmap(background, 0,0,p);
             paint.setColor(color);
-            canvas.drawText(Integer.toString(secondsCounter),((MainView.screenX - MainView.enemySizeX*3)/2 - MainView.screenX/30),MainView.screenY/2 + MainView.screenY/5,paint);
+            canvas.drawText(Integer.toString(secondsCounter),((MainView.screenX - MainView.enemySizeX*3)/2 - MainView.screenX/25),MainView.screenY/2 + MainView.screenY/10,paint);
         }
     }
 

@@ -10,11 +10,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Random;
 
+import io.github.brenofrocha.cupvisitors.Activities.GameOverActivity;
 import io.github.brenofrocha.cupvisitors.Activities.MenuActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
 import io.github.brenofrocha.cupvisitors.Classes.Button;
@@ -109,7 +111,7 @@ public class MainView extends View implements Runnable
         enemyImages[10] = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil);
         enemySizeX = screenX/enemyImages[0].getWidth()*2.5f;
         //Player
-        player = new Player(ctx);
+        player = new Player(ctx, this);
         //Enemy
         enemySizeY = screenY/enemyImages[0].getHeight()*2.2f;
         enemies = new Enemy[linesOfEnemies][columnsOfEnemies];
@@ -126,7 +128,7 @@ public class MainView extends View implements Runnable
             }
         }
         level = 0;
-        newLevel();
+
         //Buttons
         bSizeX = (int)((screenX*0.557f)/5f);
         bSizeY = (int)((screenY*1.0694f)/5f);
@@ -155,7 +157,6 @@ public class MainView extends View implements Runnable
 
         //Level Manager
         levelManager = new LevelManager(ctx, this);
-
         levelManager.levelFinished = true;
     }
 
@@ -365,7 +366,7 @@ public class MainView extends View implements Runnable
         }
         if(fadeIn)
         {
-            alpha -= 5;
+            alpha -= 17;
             paintFade.setAlpha(alpha);
             if(alpha == 0)
             {
@@ -376,7 +377,7 @@ public class MainView extends View implements Runnable
 
     private void setFadeOut()
     {
-        alpha += 5;
+        alpha += 17;
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {
@@ -386,6 +387,10 @@ public class MainView extends View implements Runnable
             {
                 case "menu":
                     i = new Intent(ctx, MenuActivity.class);
+                    break;
+                case "gameover":
+                    i = new Intent(ctx, GameOverActivity.class);
+                    i.putExtra("level", level);
                     break;
             }
             ctx.startActivity(i);
@@ -493,6 +498,17 @@ public class MainView extends View implements Runnable
                 player.posX = ((MainView.screenX) / 2) - ((MainView.enemySizeX * 3) / 2) - player.sizeX / 2;
                 levelManager.levelFinished = true;
             }
+        }
+    }
+
+    public void gameOver()
+    {
+        if(!fadeOut && !fadeIn && !pause)
+        {
+            pause = true;
+            alpha = 0;
+            sceneFade = "gameover";
+            fadeOut = true;
         }
     }
 }

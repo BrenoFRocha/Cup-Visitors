@@ -22,7 +22,7 @@ import io.github.brenofrocha.cupvisitors.R;
  * Created by Breno on 12/01/2019.
  */
 
-public class AboutView extends View implements Runnable
+public class GameOverView extends View implements Runnable
 {
     Handler handler;
     private int bSizeX, bSizeY, mBPosX, mBPosY;
@@ -30,7 +30,7 @@ public class AboutView extends View implements Runnable
     private Background background;
     private Button menuButton;
     private Paint p;
-    private Bitmap aboutArt;
+    private Bitmap gameOverArt;
     private Context ctx;
 
     //Fade
@@ -39,13 +39,13 @@ public class AboutView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public AboutView(Context ctx, Activity act)
+    public GameOverView(Context ctx, int level)
     {
         super(ctx);
         this.ctx = ctx;
 
         //General
-        handler = new android.os.Handler();
+        handler = new Handler();
         handler.post(this);
         p = new Paint();
         DisplayMetrics display = new DisplayMetrics();
@@ -66,15 +66,38 @@ public class AboutView extends View implements Runnable
         background = new Background(ctx, screenX, screenY);
 
         //Buttons
-        bSizeX = (int)((screenX*0.557f)/4.5f);
-        bSizeY = (int)((screenY*1.0694f)/4.5f);
-        mBPosX = (int)(screenX - bSizeX*1.75f);
-        mBPosY = (int)(screenY - bSizeY*1.3f);
+        bSizeX = (int)((screenX*0.557f)/5.5f);
+        bSizeY = (int)((screenY*1.0694f)/5.5f);
+        mBPosX = (int)(screenX/2) - (bSizeX/2);
+        mBPosY = (int)(screenY - bSizeY*1.35f);
         Bitmap menuBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX, bSizeY, false);
         menuButton = new Button(mBPosX, mBPosY, menuBImage);
 
-        //About
-        aboutArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.about_background), screenX, screenY, false);
+        //Game Over
+        switch (level)
+        {
+            case 1:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover0), screenX, screenY, false);
+                break;
+            case 2:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover1), screenX, screenY, false);
+                break;
+            case 3:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover2), screenX, screenY, false);
+                break;
+            case 4:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover3), screenX, screenY, false);
+                break;
+            case 5:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover4), screenX, screenY, false);
+                break;
+            case 6:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameover5), screenX, screenY, false);
+                break;
+            case 7:
+                gameOverArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.gameoverspecial), screenX, screenY, false);
+                break;
+        }
     }
 
     @Override
@@ -119,7 +142,7 @@ public class AboutView extends View implements Runnable
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         background.draw(canvas, p);
-        canvas.drawBitmap(aboutArt, 0, 0, p);
+        canvas.drawBitmap(gameOverArt, 0, 0, p);
         menuButton.draw(canvas, p);
         canvas.drawRect(0,0,screenX,screenY,paintFade);
     }

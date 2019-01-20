@@ -190,7 +190,7 @@ public class MenuView extends View implements Runnable
         }
         if(fadeIn)
         {
-            alpha -= 5;
+            alpha -= 17;
             paintFade.setAlpha(alpha);
             if(alpha == 0)
             {
@@ -201,7 +201,7 @@ public class MenuView extends View implements Runnable
 
     private void setFadeOut()
     {
-        alpha += 5;
+        alpha += 17;
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {
