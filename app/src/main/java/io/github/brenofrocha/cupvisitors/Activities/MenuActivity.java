@@ -29,15 +29,7 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(new MenuView(this));
     }
 
-    public void changeActivity(String newActivity)
-    {
-        switch (newActivity)
-        {
-            case "about":
-                Intent i = new Intent(this, AboutActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                break;
-        }
+    @Override
+    public void onBackPressed() {
     }
 }

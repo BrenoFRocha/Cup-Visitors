@@ -37,7 +37,7 @@ public class Shoot
         }
         if(thereIsAShoot)
         {
-            posY -= 25f;
+            posY -= 30f;
         }
         else
         {

@@ -31,4 +31,7 @@ public class GameOverActivity extends AppCompatActivity {
         //Tela
         setContentView(new GameOverView(this, level));
     }
+    @Override
+    public void onBackPressed() {
+    }
 }

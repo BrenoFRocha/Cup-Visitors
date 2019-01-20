@@ -65,15 +65,15 @@ public class Enemy
         }
 
     }
-    public void update(float posShootX,float posShootY,float sizeShootX,float sizeShootY, Player player)
+    public void update(Shoot shoot, Player player)
     {
         posX += MainView.enemiesVelocityX;
         if(!isDestroyed)
         {
-            if(posShootX >= posX - sizeX/2f &&
-                    posShootX + sizeShootX <= posX + sizeX + sizeX/2f &&
-                    posShootY >= posY - sizeY/2f &&
-                    posShootY + sizeShootY <= posY + sizeY + sizeY/2f)
+            if(shoot.posX >= posX - sizeX/2f &&
+                    shoot.posX + sizeShootX <= posX + sizeX + sizeX/2f &&
+                    shoot.posY >= posY - sizeY/2f &&
+                    shoot.posY + sizeShootY <= posY + sizeY + sizeY/2f)
             {
                 isDestroyed = true;
                 destroyShoot();
@@ -95,8 +95,16 @@ public class Enemy
                 {
                     isShooting = false;
                 }
-                else if(shootX >= player.posX &&
-                        shootX <= player.posX + player.sizeX &&
+                else if(shoot.posX >= shootX - sizeShootX &&
+                        shoot.posX <= shootX + sizeShootX &&
+                        shoot.posY >= shootY - sizeShootY &&
+                        shoot.posY + shoot.sizeY <= shootY + sizeShootY + sizeShootY/2)
+                {
+                    isShooting = false;
+                    shoot.thereIsAShoot = false;
+                }
+                else if(shootX >= player.posX - (player.sizeX/1.8f) &&
+                        shootX <= player.posX + (player.sizeX/1.2f) &&
                         shootY + sizeShootY >= player.posY &&
                         shootY <= player.posY + player.sizeY)
                 {

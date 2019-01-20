@@ -23,4 +23,7 @@ public class AboutActivity extends AppCompatActivity {
         //Tela
         setContentView(new AboutView(this, this));
     }
+    @Override
+    public void onBackPressed() {
+    }
 }

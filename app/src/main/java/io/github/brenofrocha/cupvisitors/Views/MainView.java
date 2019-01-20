@@ -124,7 +124,7 @@ public class MainView extends View implements Runnable
                 int id = r.nextInt(max - min + 1) + min;
                 resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                 enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
         level = 0;
@@ -332,7 +332,7 @@ public class MainView extends View implements Runnable
             for(int i = 0; i < linesOfEnemies; i++)
             {
                 for(int j = 0; j < columnsOfEnemies; j++) {
-                    enemies[i][j].update(shoot.posX, shoot.posY, shoot.sizeX, shoot.sizeY, player);
+                    enemies[i][j].update(shoot, player);
                 }
             }
 
@@ -411,7 +411,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
@@ -425,7 +425,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
@@ -437,7 +437,7 @@ public class MainView extends View implements Runnable
                         int id = 8;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
@@ -449,7 +449,7 @@ public class MainView extends View implements Runnable
                         int id = 9;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
@@ -463,7 +463,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
@@ -475,7 +475,7 @@ public class MainView extends View implements Runnable
                         int id = 10;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/15, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
                 break;
