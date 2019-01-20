@@ -144,42 +144,42 @@ public class Enemy
         {
             case 0:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.usa_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 50f;
+                shootVelocity = 35f;
                 shootDamage = 0.5f;
                 break;
             case 1:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.netherlands_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 50f;
+                shootVelocity = 35f;
                 shootDamage = 0.5f;
                 break;
             case 2:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.portugal_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 50f;
+                shootVelocity = 35f;
                 shootDamage = 0.5f;
                 break;
             case 3:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.spain_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 40f;
+                shootVelocity = 30f;
                 shootDamage = 1f;
                 break;
             case 4:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.france_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 40f;
+                shootVelocity = 30f;
                 shootDamage = 1f;
                 break;
             case 5:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.england_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 40f;
+                shootVelocity = 30f;
                 shootDamage = 1f;
                 break;
             case 6:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.argentina_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 30f;
+                shootVelocity = 25f;
                 shootDamage = 2f;
                 break;
             case 7:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.uruguay_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 30f;
+                shootVelocity = 25f;
                 shootDamage = 2f;
                 break;
             case 8:
@@ -189,12 +189,12 @@ public class Enemy
                 break;
             case 9:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.italy_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 10f;
+                shootVelocity = 15f;
                 shootDamage = 4f;
                 break;
             case 10:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 5f;
+                shootVelocity = 10f;
                 shootDamage = 5f;
                 break;
         }

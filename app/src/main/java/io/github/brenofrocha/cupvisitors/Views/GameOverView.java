@@ -164,7 +164,7 @@ public class GameOverView extends View implements Runnable
         }
         if(fadeIn)
         {
-            alpha -= 17;
+            alpha -= 15;
             paintFade.setAlpha(alpha);
             if(alpha == 0)
             {
@@ -175,7 +175,7 @@ public class GameOverView extends View implements Runnable
 
     private void setFadeOut()
     {
-        alpha += 17;
+        alpha += 15;
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {

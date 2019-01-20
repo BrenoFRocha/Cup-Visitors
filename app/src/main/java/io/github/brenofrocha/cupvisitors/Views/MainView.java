@@ -194,7 +194,10 @@ public class MainView extends View implements Runnable
                         touchY >= sBPosY &&
                         touchY <= sBPosY + bSizeY && !pause && player.life > 0)
                 {
-                    shoot.thereIsAShoot = true;
+                    if(!shoot.thereIsAShoot) {
+                        shoot.posX = (player.posX + player.sizeX / 2) - (shoot.sizeX / 2);
+                        shoot.thereIsAShoot = true;
+                    }
                     shootPressed = true;
                 }
                 if(touchX >= 0 &&
@@ -340,7 +343,7 @@ public class MainView extends View implements Runnable
             player.update();
         }
         checkDestruction();
-        levelManager.update();
+        levelManager.update(player);
         if(fadeIn) {
             setFadeIn();
         }
@@ -366,7 +369,7 @@ public class MainView extends View implements Runnable
         }
         if(fadeIn)
         {
-            alpha -= 17;
+            alpha -= 15;
             paintFade.setAlpha(alpha);
             if(alpha == 0)
             {
@@ -377,7 +380,7 @@ public class MainView extends View implements Runnable
 
     private void setFadeOut()
     {
-        alpha += 17;
+        alpha += 15;
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {

@@ -58,7 +58,7 @@ public class LevelManager
         }, 1000, 1000);
     }
 
-    public void update()
+    public void update(Player player)
     {
         if(levelFinished)
         {
@@ -66,6 +66,10 @@ public class LevelManager
             MainView.pause = true;
             secondsCounter = 5;
             mainView.level += 1;
+            if(mainView.level == 6)
+            {
+                player.life = 5;
+            }
             mainView.newLevel();
             background = backgroundImage(mainView.level);
             loadingLevel = true;
