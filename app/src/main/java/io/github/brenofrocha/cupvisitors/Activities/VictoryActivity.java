@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
-import io.github.brenofrocha.cupvisitors.Views.AboutView;
+import io.github.brenofrocha.cupvisitors.Views.VictoryView;
 
 public class VictoryActivity extends AppCompatActivity {
 
@@ -21,7 +21,7 @@ public class VictoryActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Tela
-        setContentView(new AboutView(this, this));
+        setContentView(new VictoryView(this));
     }
     @Override
     public void onBackPressed() {
@@ -31,15 +31,6 @@ public class VictoryActivity extends AppCompatActivity {
     public void onRestart()
     {
         super.onRestart();
-        Intent i = new Intent(this, MenuActivity.class);
-        this.finish();
-        startActivity(i);
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
         Intent i = new Intent(this, MenuActivity.class);
         this.finish();
         startActivity(i);

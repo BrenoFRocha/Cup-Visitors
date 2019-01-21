@@ -194,7 +194,7 @@ public class Enemy
                 break;
             case 10:
                 enemyShootImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.brazil_ball), sizeShootX, sizeShootY, false);
-                shootVelocity = 5f;
+                shootVelocity = 25f;
                 shootDamage = 5f;
                 break;
         }

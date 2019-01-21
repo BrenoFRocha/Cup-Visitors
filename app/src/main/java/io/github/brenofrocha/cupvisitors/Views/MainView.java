@@ -53,7 +53,7 @@ public class MainView extends View implements Runnable
     private float enemySizeY;
     private float[] enemyPosY;
     public static float enemySizeX;
-    private boolean sound, shootPressed;
+    private boolean sound, shootPressed, playerWin;
     public static boolean pause;
 
     //Fade
@@ -128,7 +128,7 @@ public class MainView extends View implements Runnable
                 enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
-        level = 0;
+        level = 6;
 
         //Buttons
         bSizeX = (int)((screenX*0.557f)/5f);
@@ -196,8 +196,16 @@ public class MainView extends View implements Runnable
                         touchY <= sBPosY + bSizeY && !pause && player.life > 0)
                 {
                     if(!shoot.thereIsAShoot) {
-                        shoot.posX = (player.posX + player.sizeX / 2) - (shoot.sizeX / 2);
+                        shoot.posX = (player.posX + player.sizeX/2f) - (shoot.sizeX/2f);
                         shoot.thereIsAShoot = true;
+                        for(int i = 0; i < linesOfEnemies; i++)
+                        {
+                            for(int j = 0; j < columnsOfEnemies; j++) {
+
+                                    enemies[i][j].isDestroyed = true;
+
+                            }
+                        }
                     }
                     shootPressed = true;
                 }
@@ -400,6 +408,8 @@ public class MainView extends View implements Runnable
                     i = new Intent(ctx, VictoryActivity.class);
                     break;
             }
+            System.gc();
+            ((Activity) ctx).finish();
             ctx.startActivity(i);
         }
     }
@@ -501,9 +511,15 @@ public class MainView extends View implements Runnable
                 }
             }
             if (destroyedEnemies == (linesOfEnemies * columnsOfEnemies)) {
-                shoot.thereIsAShoot = false;
-                player.posX = ((MainView.screenX) / 2) - ((MainView.enemySizeX * 3) / 2) - player.sizeX / 2;
-                levelManager.levelFinished = true;
+                if(level < 7) {
+                    shoot.thereIsAShoot = false;
+                    player.posX = (screenX / 2) - ((enemySizeX * 3) / 2) - player.sizeX / 2;
+                    levelManager.levelFinished = true;
+                }
+                else
+                {
+                    victoryScene();
+                }
             }
         }
     }
@@ -521,7 +537,9 @@ public class MainView extends View implements Runnable
 
     public void victoryScene()
     {
-        if(!fadeOut && !fadeIn) {
+        if(!fadeOut && !fadeIn && !playerWin) {
+            playerWin = true;
+            pause = true;
             alpha = 0;
             sceneFade = "victory";
             fadeOut = true;

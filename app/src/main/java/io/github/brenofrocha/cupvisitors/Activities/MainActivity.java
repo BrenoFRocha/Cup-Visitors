@@ -39,13 +39,4 @@ public class MainActivity extends AppCompatActivity {
         this.finish();
         startActivity(i);
     }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        Intent i = new Intent(this, MenuActivity.class);
-        this.finish();
-        startActivity(i);
-    }
 }

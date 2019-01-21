@@ -39,7 +39,7 @@ public class Background
         } else if (posY2 >= screenY) {
             posY2 = -screenY;
         }
-        posY1 += 10;
-        posY2 += 10;
+        posY1 += 5;
+        posY2 += 5;
     }
 }

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -26,7 +27,7 @@ import io.github.brenofrocha.cupvisitors.R;
 public class VictoryView extends View implements Runnable
 {
     Handler handler;
-    private int bSizeX, bSizeY, mBPosX, mBPosY, aBPosX, aBPosY;
+    private int bSizeX, bSizeY, bPosY, mBPosX, aBPosX;
     public static int screenX, screenY;
     private Background background;
     private Button menuButton, aboutButton;
@@ -40,7 +41,7 @@ public class VictoryView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public VictoryView(Context ctx, int level)
+    public VictoryView(Context ctx)
     {
         super(ctx);
         this.ctx = ctx;
@@ -67,20 +68,18 @@ public class VictoryView extends View implements Runnable
         background = new Background(ctx, screenX, screenY);
 
         //Buttons
-        bSizeX = (int)((screenX*0.557f)/5.5f);
-        bSizeY = (int)((screenY*1.0694f)/5.5f);
+        bSizeX = (int)((screenX*0.557f)/4f);
+        bSizeY = (int)((screenY*1.0694f)/4f);
+        bPosY = (int)(screenY - bSizeY*1.5f);
 
-        mBPosX = (int)((screenX/2) - (bSizeX/2)) - bSizeX;
-        mBPosY = (int)(screenY - bSizeY*1.35f);
+        mBPosX = (int)(((screenX/2) - (bSizeX/2)) + (bSizeX*2f));
         Bitmap menuBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX, bSizeY, false);
-        menuButton = new Button(mBPosX, mBPosY, menuBImage);
-        aBPosX = (int)((screenX/2) - (bSizeX/2)) + bSizeX;
-        aBPosY = (int)(screenY - bSizeY*1.35f);
-        Bitmap aboutBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.menu_button), bSizeX, bSizeY, false);
-        aboutButton = new Button(aBPosX, aBPosY, aboutBImage);
+        menuButton = new Button(mBPosX, bPosY, menuBImage);
+        aBPosX = (int)(((screenX/2) - (bSizeX/2)) - (bSizeX*2f));
+        Bitmap aboutBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.about_button), bSizeX, bSizeY, false);
+        aboutButton = new Button(aBPosX, bPosY, aboutBImage);
 
         victoryArt = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.victory_background), screenX, screenY, false);
-
     }
 
     @Override
@@ -96,8 +95,8 @@ public class VictoryView extends View implements Runnable
             case MotionEvent.ACTION_DOWN:
                 if(touchX >= mBPosX &&
                         touchX <= mBPosX + bSizeX &&
-                        touchY >= mBPosY &&
-                        touchY <= mBPosY + bSizeY)
+                        touchY >= bPosY &&
+                        touchY <= bPosY + bSizeY)
                 {
                     if(!fadeOut && !fadeIn) {
                         alpha = 0;
@@ -107,8 +106,8 @@ public class VictoryView extends View implements Runnable
                 }
                 if(touchX >= aBPosX &&
                         touchX <= aBPosX + bSizeX &&
-                        touchY >= aBPosY &&
-                        touchY <= aBPosY + bSizeY)
+                        touchY >= bPosY &&
+                        touchY <= bPosY + bSizeY)
                 {
                     if(!fadeOut && !fadeIn) {
                         alpha = 0;
@@ -138,6 +137,7 @@ public class VictoryView extends View implements Runnable
         background.draw(canvas, p);
         canvas.drawBitmap(victoryArt, 0, 0, p);
         menuButton.draw(canvas, p);
+        aboutButton.draw(canvas, p);
         canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
 
