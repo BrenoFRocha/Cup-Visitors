@@ -25,6 +25,8 @@
             android:screenOrientation="landscape"/>
         <activity android:name=".Activities.VictoryActivity"
             android:screenOrientation="landscape"/>
+        <activity android:name=".Activities.TutorialActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

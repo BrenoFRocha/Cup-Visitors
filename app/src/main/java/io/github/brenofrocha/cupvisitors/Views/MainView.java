@@ -128,7 +128,7 @@ public class MainView extends View implements Runnable
                 enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
-        level = 6;
+        level = 0;
 
         //Buttons
         bSizeX = (int)((screenX*0.557f)/5f);
@@ -198,14 +198,6 @@ public class MainView extends View implements Runnable
                     if(!shoot.thereIsAShoot) {
                         shoot.posX = (player.posX + player.sizeX/2f) - (shoot.sizeX/2f);
                         shoot.thereIsAShoot = true;
-                        for(int i = 0; i < linesOfEnemies; i++)
-                        {
-                            for(int j = 0; j < columnsOfEnemies; j++) {
-
-                                    enemies[i][j].isDestroyed = true;
-
-                            }
-                        }
                     }
                     shootPressed = true;
                 }

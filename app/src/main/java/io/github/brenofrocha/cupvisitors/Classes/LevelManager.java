@@ -67,7 +67,11 @@ public class LevelManager
             secondsCounter = 5;
             mainView.level += 1;
             if (mainView.level == 6) {
-                player.life = 5;
+                player.life += 5;
+            }
+            else
+            {
+                player.life += 1;
             }
             mainView.newLevel();
             background = backgroundImage(mainView.level);

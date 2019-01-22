@@ -28,7 +28,7 @@ public class VictoryView extends View implements Runnable
 {
     Handler handler;
     private int bSizeX, bSizeY, bPosY, mBPosX, aBPosX;
-    public static int screenX, screenY;
+    public int screenX, screenY;
     private Background background;
     private Button menuButton, aboutButton;
     private Paint p;

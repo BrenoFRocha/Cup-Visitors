@@ -18,10 +18,9 @@ public class Background
 {
     private Bitmap backgroundImage;
     private float posY1, posY2;
-    private int screenX, screenY;
+    private int screenY;
 
     public Background(Context c, int screenX, int screenY) {
-        this.screenX = screenX;
         this.screenY = screenY;
         posY1 = 0;
         posY2 = -screenY;

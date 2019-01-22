@@ -26,7 +26,7 @@ public class GameOverView extends View implements Runnable
 {
     Handler handler;
     private int bSizeX, bSizeY, mBPosX, mBPosY;
-    public static int screenX, screenY;
+    public int screenX, screenY;
     private Background background;
     private Button menuButton;
     private Paint p;

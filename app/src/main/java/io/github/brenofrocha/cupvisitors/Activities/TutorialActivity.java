@@ -2,14 +2,13 @@ package io.github.brenofrocha.cupvisitors.Activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
-import io.github.brenofrocha.cupvisitors.Views.AboutView;
-import io.github.brenofrocha.cupvisitors.Views.MenuView;
+import io.github.brenofrocha.cupvisitors.Views.TutorialView;
 
-public class AboutActivity extends AppCompatActivity {
+public class TutorialActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +21,7 @@ public class AboutActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Tela
-        setContentView(new AboutView(this));
+        setContentView(new TutorialView(this));
     }
     @Override
     public void onBackPressed() {

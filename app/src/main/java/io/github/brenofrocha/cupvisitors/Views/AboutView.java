@@ -26,7 +26,7 @@ public class AboutView extends View implements Runnable
 {
     Handler handler;
     private int bSizeX, bSizeY, mBPosX, mBPosY;
-    public static int screenX, screenY;
+    public int screenX, screenY;
     private Background background;
     private Button menuButton;
     private Paint p;
@@ -39,7 +39,7 @@ public class AboutView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public AboutView(Context ctx, Activity act)
+    public AboutView(Context ctx)
     {
         super(ctx);
         this.ctx = ctx;

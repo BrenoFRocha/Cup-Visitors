@@ -25,7 +25,7 @@ public class Player
     {
         this.mainView = mainView;
         dead = false;
-        life = 5;
+        life = 4;
         playerImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(c.getResources(), R.drawable.player), (int) (MainView.screenX/15f), (int) (MainView.screenX/15f), false);
         sizeX = playerImage.getWidth();
         sizeY = playerImage.getHeight();
