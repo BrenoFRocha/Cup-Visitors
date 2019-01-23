@@ -30,6 +30,7 @@ public class Enemy
     public boolean isDestroyed;
     private boolean isShooting;
     private final Random random;
+    private Explosion explosion;
 
     public Enemy(Context ctx, float posX, float posY, Bitmap image, int index, Shoot shoot)
     {
@@ -64,7 +65,10 @@ public class Enemy
                 canvas.drawBitmap(enemyShootImage, shootX, shootY, p);
             }
         }
-
+        else
+        {
+            explosion.draw(canvas, p);
+        }
     }
     public void update(Shoot shoot, Player player)
     {
@@ -83,6 +87,8 @@ public class Enemy
                     shoot.posY >= posY - sizeY/2f &&
                     shoot.posY + sizeShootY <= posY + sizeY + sizeY/2f && shoot.thereIsAShoot)
             {
+                explosion = new Explosion(ctx, posX, posY, (int)(sizeX), (int)(sizeY));
+                explosion.startAnimation();
                 isDestroyed = true;
                 destroyShoot();
             }

@@ -354,7 +354,7 @@ public class MainView extends View implements Runnable
             {
                 for(int i = 0; i < linesOfEnemies; i++)
                 {
-                    enemyPosY[i] += 10;
+                    enemyPosY[i] += 5;
                 }
             }
             for(int i = 0; i < linesOfEnemies; i++)
@@ -528,6 +528,7 @@ public class MainView extends View implements Runnable
             }
             if (destroyedEnemies == (linesOfEnemies * columnsOfEnemies)) {
                 if(level < 7) {
+                    System.gc();
                     shoot.thereIsAShoot = false;
                     player.posX = (screenX / 2) - ((enemySizeX * 3) / 2) - player.sizeX / 2;
                     levelManager.levelFinished = true;

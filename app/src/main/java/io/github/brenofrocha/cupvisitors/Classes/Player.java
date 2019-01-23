@@ -15,14 +15,18 @@ import io.github.brenofrocha.cupvisitors.Views.MainView;
 
 public class Player
 {
+    private Context ctx;
     private MainView mainView;
     private Bitmap playerImage;
     public float posX, posY, sizeX,sizeY, velocity, rangeLife;
     public int life;
     public boolean MoveRight,MoveLeft;
     private boolean dead;
+    private Explosion explosion;
+
     public Player(Context c, MainView mainView)
     {
+        this.ctx = c;
         this.mainView = mainView;
         dead = false;
         life = 4;
@@ -39,6 +43,10 @@ public class Player
         if(!dead) {
             canvas.drawBitmap(playerImage, posX, posY, p);
         }
+        else
+        {
+            explosion.draw(canvas, p);
+        }
     }
 
     public void update()
@@ -46,6 +54,8 @@ public class Player
         if(!dead) {
             if (life <= 0) {
                 dead = true;
+                explosion = new Explosion(ctx, posX, posY, (int)(sizeX), (int)(sizeY));
+                explosion.startAnimation();
             }
             if (MoveRight && posX + sizeX + velocity <= MainView.screenX - MainView.enemySizeX * 3 - MainView.screenX / 250) {
                 posX += velocity;
