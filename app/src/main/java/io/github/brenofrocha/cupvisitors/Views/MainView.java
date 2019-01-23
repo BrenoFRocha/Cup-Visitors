@@ -44,10 +44,10 @@ public class MainView extends View implements Runnable
     private Enemy[][] enemies;
     private Player player;
     private Shoot shoot;
-    private Button menuButton, shootButton, shootButtonPressed, soundButton, noSoundButton;
+    private Button menuButton, shootButton, shootButtonPressed, soundButton, noSoundButton, pauseButton, pausedButton;
     private LevelManager levelManager;
 
-    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX, cSSizeX, min, max;
+    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX, cSSizeX, min, max, pBPosX, pBPosY, pBSizeX, pBSizeY;
     public int level;
     public static int screenX,screenY, enemiesVelocityX;
     private float enemySizeY;
@@ -95,7 +95,7 @@ public class MainView extends View implements Runnable
 
         //Enemy
         enemiesVelocityX = 1;
-        linesOfEnemies = 8;
+        linesOfEnemies = 7;
         columnsOfEnemies = 9;
         enemyImages = new Bitmap[11];
         enemyPosY = new float[linesOfEnemies];
@@ -124,7 +124,7 @@ public class MainView extends View implements Runnable
             {
                 int id = r.nextInt(max - min + 1) + min;
                 resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                 enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
             }
         }
@@ -151,6 +151,15 @@ public class MainView extends View implements Runnable
         soundButton = new Button(bPosX, sdBPosY, sdBImage);
         nosdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.nosound_button), bSizeX,bSizeY, false);
         noSoundButton = new Button(bPosX, sdBPosY, nosdBImage);
+        //Pause Button
+        pBSizeX = (int)((screenX*0.557f)/8f);
+        pBSizeY = (int)((screenY*1.0694f)/8f);
+        pBPosX = (int)(0);
+        pBPosY = (int)(0);
+        Bitmap pBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.pause_button), pBSizeX, pBSizeY, false);
+        Bitmap npBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.paused_button), pBSizeX, pBSizeY, false);
+        pauseButton = new Button(pBPosX, pBPosY, pBImage);
+        pausedButton = new Button(pBPosX, pBPosY, npBImage);
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -201,19 +210,26 @@ public class MainView extends View implements Runnable
                     }
                     shootPressed = true;
                 }
-                if(touchX >= 0 &&
+                else if(touchX >= pBPosX &&
+                        touchX <= pBPosX + pBSizeX &&
+                        touchY >= pBPosY &&
+                        touchY <= pBPosY + pBSizeY && !fadeIn && !fadeOut)
+                {
+                    pause = !pause;
+                }
+                else if(touchX >= 0 &&
                         touchX < (screenX/2 - (enemySizeX*3/2)) && !pause)
                 {
                     player.MoveRight = false;
                     player.MoveLeft = true;
                 }
-                if(touchX >= (screenX/2 - (enemySizeX*3/2)) &&
+                else if(touchX >= (screenX/2 - (enemySizeX*3/2)) &&
                         touchX < (screenX - (enemySizeX*3)) && !pause)
                 {
                     player.MoveLeft = false;
                     player.MoveRight = true;
                 }
-                if(touchX > (screenX - (enemySizeX*3)) && !pause)
+                else if(touchX > (screenX - (enemySizeX*3)) && !pause)
                 {
                     player.MoveRight = false;
                     player.MoveLeft = false;
@@ -291,6 +307,14 @@ public class MainView extends View implements Runnable
         {
             noSoundButton.draw(canvas,p);
         }
+        if(pause && !levelManager.loadingLevel && !levelManager.levelFinished && !fadeIn && !fadeOut)
+        {
+            pausedButton.draw(canvas, p);
+        }
+        else
+        {
+            pauseButton.draw(canvas, p);
+        }
         levelManager.draw(canvas,p);
         canvas.drawRect(0,0,screenX,screenY,paintFade);
     }
@@ -330,7 +354,7 @@ public class MainView extends View implements Runnable
             {
                 for(int i = 0; i < linesOfEnemies; i++)
                 {
-                    enemyPosY[i] += 3;
+                    enemyPosY[i] += 10;
                 }
             }
             for(int i = 0; i < linesOfEnemies; i++)
@@ -419,7 +443,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
@@ -433,7 +457,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
@@ -445,7 +469,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = 8;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
@@ -457,7 +481,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = 9;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
@@ -471,7 +495,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }
@@ -483,7 +507,7 @@ public class MainView extends View implements Runnable
                     {
                         int id = 10;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
-                        enemyPosY[i] = (resizedEnemyImage.getHeight() + enemySizeY/4) * i;
+                        enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
                         enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
                     }
                 }

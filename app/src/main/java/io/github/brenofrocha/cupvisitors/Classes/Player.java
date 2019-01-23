@@ -30,8 +30,8 @@ public class Player
         sizeX = playerImage.getWidth();
         sizeY = playerImage.getHeight();
         posX = ((MainView.screenX)/2) - ((MainView.enemySizeX*3)/2) - sizeX/2;
-        posY = MainView.screenY - sizeY * 1.75f;
-        velocity = 15f;
+        posY = MainView.screenY - sizeY * 1.65f;
+        velocity = 20f;
     }
 
     public void draw(Canvas canvas, Paint p)
@@ -47,9 +47,9 @@ public class Player
             if (life <= 0) {
                 dead = true;
             }
-            if (MoveRight && posX + sizeX <= MainView.screenX - MainView.enemySizeX * 3 - MainView.screenX / 250) {
+            if (MoveRight && posX + sizeX + velocity <= MainView.screenX - MainView.enemySizeX * 3 - MainView.screenX / 250) {
                 posX += velocity;
-            } else if (MoveLeft && posX >= MainView.screenX / 250) {
+            } else if (MoveLeft && posX - velocity >= MainView.screenX / 250) {
                 posX -= velocity;
             }
             checkRange();

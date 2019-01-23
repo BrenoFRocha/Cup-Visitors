@@ -40,7 +40,7 @@ public class Enemy
         number = 10000;
         sizeShootX = (int)(MainView.screenX/30);
         sizeShootY = (int)(MainView.screenX/30);
-        shootVelocity = 25f;
+        shootVelocity = 40f;
         setShootProperties(index);
         isDestroyed = false;
         isShooting = false;
@@ -71,10 +71,17 @@ public class Enemy
         posX += MainView.enemiesVelocityX;
         if(!isDestroyed)
         {
+            if(posX >= player.posX - player.sizeX/2 &&
+            posX + sizeX <= player.posX + player.sizeX &&
+            posY + sizeY >= player.posY &&
+            posY <= player.posY + player.sizeY)
+            {
+                player.life = 0;
+            }
             if(shoot.posX >= posX - sizeX/2f &&
                     shoot.posX + sizeShootX <= posX + sizeX + sizeX/2f &&
                     shoot.posY >= posY - sizeY/2f &&
-                    shoot.posY + sizeShootY <= posY + sizeY + sizeY/2f)
+                    shoot.posY + sizeShootY <= posY + sizeY + sizeY/2f && shoot.thereIsAShoot)
             {
                 isDestroyed = true;
                 destroyShoot();
