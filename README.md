@@ -9,7 +9,8 @@ Now you can play against some nations that participated of 2014 FIFA World Cup! 
 ### Technology
 
  - [Java](https://www.oracle.com/java/)
- - [Android Studio 3.2.1](https://developer.android.com/studio/)
+ - [Android Studio 3.3](https://developer.android.com/studio/)
+ - [Adobe Illustrator CC](https://www.adobe.com/br/products/illustrator.html)
  - [Adobe Photoshop CC](https://www.adobe.com/br/products/photoshop.html)
 
 ### Important
