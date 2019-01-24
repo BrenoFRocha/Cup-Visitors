@@ -8,10 +8,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.io.IOException;
 
 import io.github.brenofrocha.cupvisitors.Activities.AboutActivity;
 import io.github.brenofrocha.cupvisitors.Activities.MainActivity;
@@ -27,7 +30,7 @@ import io.github.brenofrocha.cupvisitors.R;
 public class MenuView extends View implements Runnable
 {
     Handler handler;
-    private int bSizeX, bSizeY, pBPosX, pBPosY, aBPosX, sBPosY, tBPosX, sdBSizeX, sdBSizeY, sdBPosX, sdBPosY;
+    private int bSizeX, bSizeY, pBPosX, pBPosY, aBPosX, sBPosY, tBPosX, sdBSizeX, sdBSizeY, sdBPosX, sdBPosY, lengthSound;
     public int screenX, screenY;
     private boolean sound;
     private Background background;
@@ -35,6 +38,7 @@ public class MenuView extends View implements Runnable
     private Paint p;
     private Bitmap menuArt;
     private Context ctx;
+    private final MediaPlayer song;
 
     //Fade
     public int alpha;
@@ -42,7 +46,7 @@ public class MenuView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public MenuView(Context ctx)
+    public MenuView(Context ctx, boolean sound)
     {
         super(ctx);
         this.ctx = ctx;
@@ -66,7 +70,29 @@ public class MenuView extends View implements Runnable
         fadeIn = true;
 
         //Sound
-        sound = true;
+        this.sound = sound;
+        song = MediaPlayer.create(ctx, R.raw.menu_sound);
+        song.setLooping(true);
+        if(this.sound)
+        {
+            try {
+                song.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(song.isPlaying()) {
+                song.pause();
+                song.seekTo(0);
+            }
+            song.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    song.start();
+                }
+            });
+        }
         sdBSizeX = (int)((screenX*0.557f)/7f);
         sdBSizeY = (int)((screenY*1.0694f)/7f);
         sdBPosX = (int)(sdBSizeX*0.20f);
@@ -147,7 +173,21 @@ public class MenuView extends View implements Runnable
                         touchY >= sdBPosY &&
                         touchY <= sdBPosY + sdBSizeY)
                 {
-                    sound = !sound;
+                    if(sound)
+                    {
+                        sound = false;
+                        song.pause();
+                        lengthSound = song.getCurrentPosition();
+                    }
+                    else
+                    {
+                        if(lengthSound != 0)
+                        {
+                            song.seekTo(lengthSound);
+                        }
+                        song.start();
+                        sound = true;
+                    }
                 }
                 break;
         }
@@ -216,6 +256,7 @@ public class MenuView extends View implements Runnable
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {
+            song.stop();
             fadeOut = false;
             Intent i = new Intent();
             switch (sceneFade)
@@ -230,6 +271,7 @@ public class MenuView extends View implements Runnable
                     i = new Intent(ctx, TutorialActivity.class);
                     break;
             }
+            i.putExtra("sound", sound);
             ctx.startActivity(i);
         }
     }

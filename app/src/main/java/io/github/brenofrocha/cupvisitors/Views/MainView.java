@@ -8,12 +8,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.IOException;
 import java.util.Random;
 
 import io.github.brenofrocha.cupvisitors.Activities.GameOverActivity;
@@ -46,14 +48,17 @@ public class MainView extends View implements Runnable
     private Shoot shoot;
     private Button menuButton, shootButton, shootButtonPressed, soundButton, noSoundButton, pauseButton, pausedButton;
     private LevelManager levelManager;
+    private final MediaPlayer shootSound;
+    private final MediaPlayer song;
 
-    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX, cSSizeX, min, max, pBPosX, pBPosY, pBSizeX, pBSizeY;
+    private int columnsOfEnemies, linesOfEnemies, sBPosY, mBPosY, sdBPosY, bSizeX, bSizeY, bPosX, cSSizeX, min, max, pBPosX, pBPosY, pBSizeX, pBSizeY, lengthSound;
     public int level;
     public static int screenX,screenY, enemiesVelocityX;
     private float enemySizeY;
     private float[] enemyPosY;
     public static float enemySizeX;
-    private boolean sound, shootPressed, playerWin;
+    private boolean shootPressed, playerWin;
+    public boolean sound;
     public static boolean pause;
 
     //Fade
@@ -62,7 +67,7 @@ public class MainView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public MainView(Context ctx)
+    public MainView(Context ctx, boolean sound)
     {
         super(ctx);
         this.ctx = ctx;
@@ -83,6 +88,31 @@ public class MainView extends View implements Runnable
         paintFade.setColor(Color.BLACK);
         paintFade.setAlpha(alpha);
         fadeIn = true;
+
+        //Sound
+        this.sound = sound;
+        song = MediaPlayer.create(ctx, R.raw.game_sound);
+        song.setLooping(true);
+        if(this.sound)
+        {
+            try {
+                song.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(song.isPlaying()) {
+                song.pause();
+                song.seekTo(0);
+            }
+            song.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    song.start();
+                }
+            });
+        }
 
         Bitmap sBImage, sPBImage, mBImage, sdBImage, nosdBImage;
         cSSizeX = (((screenX/30)/4)*3);
@@ -125,7 +155,7 @@ public class MainView extends View implements Runnable
                 int id = r.nextInt(max - min + 1) + min;
                 resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                 enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
             }
         }
         level = 0;
@@ -145,7 +175,6 @@ public class MainView extends View implements Runnable
         shootButton = new Button(bPosX, sBPosY, sBImage);
         shootButtonPressed = new Button(bPosX, sBPosY, sPBImage);
         //Sound Buttons
-        sound = true;
         sdBPosY = (int)((screenY/2) - bSizeY/2);
         sdBImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.sound_button), bSizeX,bSizeY, false);
         soundButton = new Button(bPosX, sdBPosY, sdBImage);
@@ -168,6 +197,10 @@ public class MainView extends View implements Runnable
         //Level Manager
         levelManager = new LevelManager(ctx, this);
         levelManager.levelFinished = true;
+
+        //Shoot Sound
+        shootSound = MediaPlayer.create(ctx, R.raw.shoot_sound);
+        shootSound.setLooping(false);
     }
 
     @Override
@@ -197,7 +230,21 @@ public class MainView extends View implements Runnable
                         touchY >= sdBPosY &&
                         touchY <= sdBPosY + bSizeY)
                 {
-                    sound = !sound;
+                    if(sound)
+                    {
+                        sound = false;
+                        song.pause();
+                        lengthSound = song.getCurrentPosition();
+                    }
+                    else
+                    {
+                        if(lengthSound != 0)
+                        {
+                            song.seekTo(lengthSound);
+                        }
+                        song.start();
+                        sound = true;
+                    }
                 }
                 else if(touchX >= bPosX &&
                         touchX <= bPosX + bSizeX &&
@@ -207,6 +254,13 @@ public class MainView extends View implements Runnable
                     if(!shoot.thereIsAShoot) {
                         shoot.posX = (player.posX + player.sizeX/2f) - (shoot.sizeX/2f);
                         shoot.thereIsAShoot = true;
+                        if(sound) {
+                            if(shootSound.isPlaying()) {
+                                shootSound.pause();
+                                shootSound.seekTo(0);
+                            }
+                            shootSound.start();
+                        }
                     }
                     shootPressed = true;
                 }
@@ -409,6 +463,7 @@ public class MainView extends View implements Runnable
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {
+            song.stop();
             fadeOut = false;
             Intent i = new Intent();
             switch (sceneFade)
@@ -424,6 +479,7 @@ public class MainView extends View implements Runnable
                     i = new Intent(ctx, VictoryActivity.class);
                     break;
             }
+            i.putExtra("sound", sound);
             System.gc();
             ((Activity) ctx).finish();
             ctx.startActivity(i);
@@ -444,7 +500,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;
@@ -458,7 +514,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;
@@ -470,7 +526,7 @@ public class MainView extends View implements Runnable
                         int id = 8;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;
@@ -482,7 +538,7 @@ public class MainView extends View implements Runnable
                         int id = 9;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;
@@ -496,7 +552,7 @@ public class MainView extends View implements Runnable
                         int id = r.nextInt(max - min + 1) + min;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;
@@ -508,7 +564,7 @@ public class MainView extends View implements Runnable
                         int id = 10;
                         resizedEnemyImage = Bitmap.createScaledBitmap(enemyImages[id], (int) enemySizeX, (int) enemySizeY, false);
                         enemyPosY[i] = ((resizedEnemyImage.getHeight() + enemySizeY/4) * i) + ((screenY*1.0694f)/7f);
-                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot);
+                        enemies[i][j] = new Enemy(ctx, ((screenX/12f)*j) + screenX/19.5f, enemyPosY[i], resizedEnemyImage, id, shoot, this);
                     }
                 }
                 break;

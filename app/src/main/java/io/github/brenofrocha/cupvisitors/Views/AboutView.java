@@ -8,10 +8,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.io.IOException;
 
 import io.github.brenofrocha.cupvisitors.Activities.MenuActivity;
 import io.github.brenofrocha.cupvisitors.Classes.Background;
@@ -27,11 +30,13 @@ public class AboutView extends View implements Runnable
     Handler handler;
     private int bSizeX, bSizeY, mBPosX, mBPosY;
     public int screenX, screenY;
+    private boolean sound;
     private Background background;
     private Button menuButton;
     private Paint p;
     private Bitmap aboutArt;
     private Context ctx;
+    private final MediaPlayer song;
 
     //Fade
     public int alpha;
@@ -39,7 +44,7 @@ public class AboutView extends View implements Runnable
     public String sceneFade;
     private Paint paintFade;
 
-    public AboutView(Context ctx)
+    public AboutView(Context ctx, boolean sound)
     {
         super(ctx);
         this.ctx = ctx;
@@ -61,6 +66,31 @@ public class AboutView extends View implements Runnable
         paintFade.setColor(Color.BLACK);
         paintFade.setAlpha(alpha);
         fadeIn = true;
+
+        //Sound
+        this.sound = sound;
+        song = MediaPlayer.create(ctx, R.raw.menu_sound);
+        song.setLooping(true);
+        if(this.sound)
+        {
+            try {
+                song.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(song.isPlaying()) {
+                song.pause();
+                song.seekTo(0);
+            }
+            song.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    song.start();
+                }
+            });
+        }
 
         //Background
         background = new Background(ctx, screenX, screenY);
@@ -156,6 +186,7 @@ public class AboutView extends View implements Runnable
         paintFade.setAlpha(alpha);
         if(alpha >= 255)
         {
+            song.stop();
             fadeOut = false;
             Intent i = new Intent();
             switch (sceneFade)
@@ -164,6 +195,7 @@ public class AboutView extends View implements Runnable
                     i = new Intent(ctx, MenuActivity.class);
                     break;
             }
+            i.putExtra("sound", sound);
             ctx.startActivity(i);
         }
     }

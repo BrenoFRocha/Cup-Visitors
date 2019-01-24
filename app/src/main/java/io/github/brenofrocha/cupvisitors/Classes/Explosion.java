@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,9 +19,10 @@ public class Explosion
     private Bitmap[] frames;
     private Timer timer;
     private int currentFrame;
-    public boolean run;
+    private boolean run;
     private float posX, posY;
-    
+    private final MediaPlayer explosionSound;
+
     public Explosion(Context ctx, float posX, float posY, int sizeX, int sizeY)
     {
         this.posX = posX;
@@ -46,6 +49,8 @@ public class Explosion
         frames[18] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.explosion_18), sizeX, sizeY, false);
         frames[19] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.drawable.explosion_19), sizeX, sizeY, false);
         timer = new Timer();
+        explosionSound = MediaPlayer.create(ctx, R.raw.explosion_sound);
+        explosionSound.setLooping(false);
     }
 
     private void updateFrame() {
@@ -71,9 +76,28 @@ public class Explosion
         }
     }
 
-    public void startAnimation()
+    public void startAnimation(boolean sound)
     {
         updateFrame();
         run = true;
+        if(sound) {
+            try {
+                explosionSound.prepare();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(explosionSound.isPlaying()) {
+                explosionSound.pause();
+                explosionSound.seekTo(0);
+            }
+            explosionSound.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    explosionSound.start();
+                }
+            });
+        }
     }
 }

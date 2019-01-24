@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.Random;
 import java.util.Timer;
@@ -30,11 +29,13 @@ public class Enemy
     public boolean isDestroyed;
     private boolean isShooting;
     private final Random random;
+    private MainView mainView;
     private Explosion explosion;
 
-    public Enemy(Context ctx, float posX, float posY, Bitmap image, int index, Shoot shoot)
+    public Enemy(Context ctx, float posX, float posY, Bitmap image, int index, Shoot shoot, MainView mainView)
     {
         this.ctx = ctx;
+        this.mainView = mainView;
         this.shoot = shoot;
         this.posX = posX;
         this.posY = posY;
@@ -88,7 +89,7 @@ public class Enemy
                     shoot.posY + sizeShootY <= posY + sizeY + sizeY/2f && shoot.thereIsAShoot)
             {
                 explosion = new Explosion(ctx, posX, posY, (int)(sizeX), (int)(sizeY));
-                explosion.startAnimation();
+                explosion.startAnimation(mainView.sound);
                 isDestroyed = true;
                 destroyShoot();
             }

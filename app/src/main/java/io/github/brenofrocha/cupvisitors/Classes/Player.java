@@ -55,7 +55,7 @@ public class Player
             if (life <= 0) {
                 dead = true;
                 explosion = new Explosion(ctx, posX, posY, (int)(sizeX), (int)(sizeY));
-                explosion.startAnimation();
+                explosion.startAnimation(mainView.sound);
             }
             if (MoveRight && posX + sizeX + velocity <= MainView.screenX - MainView.enemySizeX * 3 - MainView.screenX / 250) {
                 posX += velocity;

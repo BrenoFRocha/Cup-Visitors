@@ -17,10 +17,12 @@ public class GameOverActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int level = 0;
+        boolean sound = false;
         Bundle bundle = getIntent().getExtras();
         if(bundle != null)
         {
             level = bundle.getInt("level");
+            sound = bundle.getBoolean("sound");
         }
 
         //Setting landscape orientation
@@ -30,7 +32,7 @@ public class GameOverActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Tela
-        setContentView(new GameOverView(this, level));
+        setContentView(new GameOverView(this, level, sound));
     }
     @Override
     public void onBackPressed() {
