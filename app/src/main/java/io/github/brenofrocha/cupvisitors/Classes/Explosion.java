@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -65,6 +64,11 @@ public class Explosion
                 {
                     run = false;
                 }
+                explosionSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.release();
+                    };
+                });
             }
         }, 50, 50);
     }
@@ -81,23 +85,10 @@ public class Explosion
         updateFrame();
         run = true;
         if(sound) {
-            try {
-                explosionSound.prepare();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             if(explosionSound.isPlaying()) {
-                explosionSound.pause();
-                explosionSound.seekTo(0);
+                explosionSound.release();
             }
-            explosionSound.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    explosionSound.start();
-                }
-            });
+            explosionSound.start();
         }
     }
 }

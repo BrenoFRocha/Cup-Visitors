@@ -149,8 +149,8 @@ public class Enemy
 
     private void destroyShoot()
     {
-        shoot.thereIsAShoot = false;
         shoot.posY = MainView.screenY - (MainView.screenY/8f) * 1.2f;
+        shoot.thereIsAShoot = false;
     }
 
     private void setShootProperties(int index)
